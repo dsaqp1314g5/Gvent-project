@@ -423,5 +423,167 @@ public class UserResource {
 	private String buildDeleteUser() {
 		return "DELETE FROM users WHERE username=?";
 	}
+	
+	@POST
+	@Path("/{username}")
+	@Consumes(MediaType.GVENT_API_USER)
+	@Produces(MediaType.GVENT_API_USER)
+	public void addFriend(@PathParam("username") String username, @QueryParam("friend") String friend) {
+		// validateSting(Event); VALIDARRRRRRR
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			String sql = buildInsertFriend();
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			stmt.setString(1, username);
+			stmt.setString(2, friend);
+			stmt.executeUpdate();
+			/*stmt.setString(1, user.getUsername());
+			stmt.setString(2, user.getName());
+			stmt.setString(3, user.getEmail());
+			stmt.executeUpdate();
+			ResultSet rs = stmt.getGeneratedKeys();
+			if (rs.next()) {
+				String username = rs.getString(1);
+
+				user = getUserFromDatabase(username);
+			} else {
+				// Something has failed...
+			}*/
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		//return user;
+	}
+
+	private String buildInsertFriend(){
+		return "INSERT INTO friends(username_a, username_b) value (?, ?)";
+	}
+	
+	@GET
+	@Path("/{username}/friends")
+	@Produces(MediaType.GVENT_API_USER_COLLECTION)
+	public UserCollection getFriends(@QueryParam("length") int length,
+			@QueryParam("before") long before, @QueryParam("after") long after, @PathParam("username") String username) {
+		UserCollection users = new UserCollection();
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			boolean updateFromLast = after > 0;
+			stmt = conn.prepareStatement(buildGetFriendsQuery(updateFromLast));
+			if (updateFromLast) {
+				stmt.setTimestamp(1, new Timestamp(after));
+			} else {
+				if (before > 0)
+					stmt.setTimestamp(1, new Timestamp(before));
+				else
+					stmt.setTimestamp(1, null);
+				length = (length <= 0) ? 20 : length;
+				stmt.setInt(3, length);
+			}
+			//String username = username; //security.getUserPrincipal().getName();
+			stmt.setString(2, username);
+			ResultSet rs = stmt.executeQuery();
+			boolean first = true;
+			long oldestTimestamp = 0;
+			while (rs.next()) {
+				User user = new User();
+				user.setUsername(rs.getString("username"));
+				user.setName(rs.getString("name"));
+				user.setEmail(rs.getString("email"));
+				user.setRegisterDate(rs.getTimestamp("register_date").getTime());
+				oldestTimestamp = rs.getTimestamp("register_date").getTime();
+				if (first) {
+					first = false;
+					users.setNewestTimestamp(user.getRegisterDate());
+				}
+				users.addUser(user);
+			}
+			users.setOldestTimestamp(oldestTimestamp);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		return users;
+	}
+
+	private String buildGetFriendsQuery(boolean updateFromLast) {
+		if (updateFromLast)
+			return "SELECT u.*, f.* FROM users u, friends f WHERE u.register_date > ?  AND f.username_a = ? AND f.username_b = u.username ORDER BY register_date DESC";
+		else
+			return "SELECT u.*, f.* FROM users u, friends f WHERE u.register_date < ifnull(?, now()) AND f.username_a = ? AND f.username_b = u.username ORDER BY register_date DESC LIMIT ?";
+	}
+	
+	
+	@DELETE
+	@Path("/{username}/friends")
+	public void deleteFriend(@PathParam("username") String username,  @QueryParam("friend") String friend) {
+		//VALIDAR
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(buildDeleteFriend());
+			stmt.setString(1, username);
+			stmt.setString(2, friend);
+			int rows = stmt.executeUpdate();
+			if (rows == 0)
+				throw new NotFoundException("There is no user with username = "
+						+ username);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
+
+	private String buildDeleteFriend() {
+		return "DELETE FROM friends WHERE username_a = ? AND username_b = ?";
+	}
+	
+	
 
 }
