@@ -19,7 +19,8 @@ import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.MediaType;
 public class Event {
 	@InjectLinks({
 		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "events", title = "Latest events", type = MediaType.GVENT_API_EVENT_COLLECTION),
-		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "self edit", title = "Event", type = MediaType.GVENT_API_EVENT, method = "getEvent", bindings = @Binding(name = "eventId", value = "${instance.id}")) })
+		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "self edit", title = "Event", type = MediaType.GVENT_API_EVENT, method = "getEvent", bindings = @Binding(name = "eventId", value = "${instance.id}")),
+		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "comments", title = "Comments", type = MediaType.GVENT_API_COMMENT_COLLECTION, method = "getComments", bindings = @Binding(name = "eventId", value = "${instance.id}"))})
 	private List<Link> links;
 	private int id;
 	private String title;

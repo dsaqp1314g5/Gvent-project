@@ -28,8 +28,12 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.Comment;
+import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.CommentCollection;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.Event;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.EventCollection;
+import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.User;
+import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.UserCollection;
 
 @Path("/events")
 public class EventResource {
@@ -420,5 +424,313 @@ public class EventResource {
 	private String buildDeleteEvent() {
 		return "DELETE FROM events WHERE id=?";
 	}
+	
+	//////////////////COMMENTS//////////////////////////
+	
+	@GET
+	@Path("/{eventId}/comments")
+	@Produces(MediaType.GVENT_API_COMMENT_COLLECTION)  ////FALTAN INJECT LINKS PARA PAGINAR EN COMMENTCOLLECTION
+	public CommentCollection getComments(@QueryParam("length") int length,
+			@QueryParam("before") long before, @QueryParam("after") long after, @PathParam("eventId") int eventId) {
+		CommentCollection comments = new CommentCollection();
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
 
+		PreparedStatement stmt = null;
+		try {
+			boolean updateFromLast = after > 0;
+			stmt = conn.prepareStatement(buildGetCommentsQuery(updateFromLast));
+			if (updateFromLast) {
+				stmt.setTimestamp(1, new Timestamp(after));
+			} else {
+				if (before > 0)
+					stmt.setTimestamp(1, new Timestamp(before));
+				else
+					stmt.setTimestamp(1, null);
+				length = (length <= 0) ? 20 : length;
+				stmt.setInt(3, length);
+			}
+			
+			stmt.setInt(2, eventId);
+			ResultSet rs = stmt.executeQuery();
+			boolean first = true;
+			long oldestTimestamp = 0;
+			while (rs.next()) {
+				Comment comment = new Comment();
+				comment.setId(rs.getInt("id"));
+				comment.setUsername(rs.getString("username"));
+				comment.setEventId(rs.getInt("event_id"));
+				comment.setComment(rs.getString("comment"));
+				comment.setLastModified(rs.getTimestamp("last_modified").getTime());
+				oldestTimestamp = rs.getTimestamp("last_modified").getTime();
+				if (first) {
+					first = false;
+					comments.setNewestTimestamp(comment.getLastModified());
+				}
+				comments.addComment(comment);
+			}
+			comments.setOldestTimestamp(oldestTimestamp);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		return comments;
+	}
+
+	private String buildGetCommentsQuery(boolean updateFromLast) {
+		if (updateFromLast)
+			return "SELECT * FROM comments WHERE last_modified > ? AND event_id = ? ORDER BY last_modified DESC";
+		else
+			return "SELECT * FROM comments WHERE last_modified < ifnull(?, now()) AND event_id = ? ORDER BY last_modified DESC LIMIT ?";
+	}
+	
+	@GET
+	@Path("/{eventId}/comments/{commentId}")
+	@Produces(MediaType.GVENT_API_EVENT)
+	public Response getComment(@PathParam("eventId") String eventId, @PathParam("commentId") int commentId,
+			@Context Request request) {
+		// Create CacheControl
+		CacheControl cc = new CacheControl();
+
+		Comment comment = getCommentFromDatabase(eventId, commentId);
+
+		// Calculate the ETag on last modified date of user resource
+		EntityTag eTag = new EntityTag(Long.toString(comment.getLastModified()));
+
+		// Verify if it matched with etag available in http request
+		Response.ResponseBuilder rb = request.evaluatePreconditions(eTag);
+
+		// If ETag matches the rb will be non-null;
+		// Use the rb to return the response without any further processing
+		if (rb != null) {
+			return rb.cacheControl(cc).tag(eTag).build();
+		}
+
+		// If rb is null then either it is first time request; or resource is
+		// modified
+		// Get the updated representation and return with Etag attached to it
+		rb = Response.ok(comment).cacheControl(cc).tag(eTag);
+
+		return rb.build();
+	}
+
+	private Comment getCommentFromDatabase(String eventId, int commentId) {
+		Comment comment = new Comment();
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(buildGetCommentByIdQuery());
+			stmt.setInt(1, commentId);
+			stmt.setInt(2, Integer.valueOf(eventId));
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				comment.setId(rs.getInt("id"));
+				comment.setUsername(rs.getString("username"));
+				comment.setEventId(rs.getInt("event_id"));
+				comment.setComment(rs.getString("comment"));
+				comment.setLastModified(rs.getTimestamp("last_modified").getTime());
+			} else {
+				throw new NotFoundException("There's no comment with id="
+						+ commentId);
+			}
+
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		return comment;
+	}
+
+	private String buildGetCommentByIdQuery() {
+		return "SELECT * FROM comments WHERE id = ? AND event_id = ?";
+	}
+	
+	@POST
+	@Path("/{eventId}/comments")
+	@Consumes(MediaType.GVENT_API_COMMENT)
+	@Produces(MediaType.GVENT_API_COMMENT)
+	public Comment createComment(Comment comment, @PathParam("eventId") String eventId) {
+		// validateSting(Event); VALIDARRRRRRR
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			String sql = buildInsertComment();
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+			// stmt.setString(1, security.getUserPrincipal().getName()); QUE
+			// OBTENGA EL USERNAME DEL LOGEADO
+			stmt.setString(1, comment.getUsername());
+			stmt.setInt(2, Integer.valueOf(eventId));
+			stmt.setString(3, comment.getComment());
+			stmt.executeUpdate();
+			ResultSet rs = stmt.getGeneratedKeys();
+			if (rs.next()) {
+				int commentId = rs.getInt(1);
+
+				comment = getCommentFromDatabase(eventId, commentId);
+			} else {
+				// Something has failed...
+			}
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		return comment;
+	}
+
+	private String buildInsertComment() {
+		return "INSERT INTO comments(username, event_id, comment) value (?, ?, ?)";
+	}
+	
+
+	@DELETE
+	@Path("/{eventId}/comments/{commentId}")
+	public void deleteComment(@PathParam("eventId") String eventId, @PathParam("commentId") int commentId) {
+		//VALIDAR
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(buildDeleteComment());
+			stmt.setInt(1, Integer.valueOf(eventId));
+			stmt.setInt(2, commentId);
+
+			int rows = stmt.executeUpdate();
+			if (rows == 0)
+				throw new NotFoundException("There is no comment with ID = "
+						+ commentId);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
+
+	private String buildDeleteComment() {
+		return "DELETE FROM comments WHERE event_id=? AND id = ?";
+	}
+	
+	////////////////////USERS///////////////
+	@GET
+	@Path("/{eventId}/users")
+	@Produces(MediaType.GVENT_API_USER_COLLECTION)  ////FALTAN INJECT LINKS PARA PAGINAR EN COMMENTCOLLECTION
+	public UserCollection getUsers(@QueryParam("length") int length,
+			@QueryParam("before") long before, @QueryParam("after") long after, @PathParam("eventId") int eventId) {
+		UserCollection users = new UserCollection();
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			boolean updateFromLast = after > 0;
+			stmt = conn.prepareStatement(buildGetUsersQuery(updateFromLast));
+			if (updateFromLast) {
+				stmt.setTimestamp(1, new Timestamp(after));
+			} else {
+				if (before > 0)
+					stmt.setTimestamp(1, new Timestamp(before));
+				else
+					stmt.setTimestamp(1, null);
+				length = (length <= 0) ? 20 : length;
+				stmt.setInt(3, length);
+			}
+			stmt.setInt(2, eventId);
+			ResultSet rs = stmt.executeQuery();
+			boolean first = true;
+			long oldestTimestamp = 0;
+			while (rs.next()) {
+				User user = new User();
+				user.setUsername(rs.getString("username"));
+				user.setName(rs.getString("name"));
+				user.setEmail(rs.getString("email"));
+				user.setRegisterDate(rs.getTimestamp("register_date").getTime());
+				oldestTimestamp = rs.getTimestamp("register_date").getTime();
+				if (first) {
+					first = false;
+					users.setNewestTimestamp(user.getRegisterDate());
+				}
+				users.addUser(user);
+			}
+			users.setOldestTimestamp(oldestTimestamp);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		return users;
+	}
+
+	private String buildGetUsersQuery(boolean updateFromLast) {
+		if (updateFromLast)
+			return "SELECT u.*, r.username FROM event_users r, users u WHERE u.register_date > ? AND r.event_id= ? AND u.username=r.username ORDER BY register_date DESC";
+		else
+			return "SELECT u.*, r.username FROM event_users r, users u  WHERE u.register_date < ifnull(?, now()) AND r.event_id= ? AND u.username=r.username ORDER BY register_date DESC LIMIT ?";
+	}
 }
