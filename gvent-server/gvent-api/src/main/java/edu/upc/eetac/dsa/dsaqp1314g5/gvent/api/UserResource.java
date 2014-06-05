@@ -228,14 +228,14 @@ public class UserResource {
 	private String buildInsertUser() {
 		return "INSERT INTO users(username, name, email) value (?, ?, ?)";
 	}
-/*
+	
 	@GET
 	@Path("/search")
 	@Produces(MediaType.GVENT_API_USER_COLLECTION)
-	public UserCollection searchUser(@QueryParam("username") String category,
+	public UserCollection searchUser(@QueryParam("username") String username,
 			@QueryParam("title") String title, @QueryParam("length") int length) {
 
-		EventCollection events = new EventCollection();
+		UserCollection users = new UserCollection();
 
 		Connection conn = null;
 		try {
@@ -248,63 +248,24 @@ public class UserResource {
 		PreparedStatement stmt = null;
 
 		try {
-			/*System.out.println("categoria:" + category);
-			System.out.println("titulo" + title);
-			length = (length <= 0) ? 10 : length;
-			ResultSet rs;
-			if (!category.isEmpty() && !title.isEmpty()) {
-				//stmt = conn.prepareStatement(searchGetEventQueryComplete());
-				stmt.setString(1, "%" + category + "%");
-				stmt.setString(2, "%" + title + "%");
-				stmt.setInt(3, length);
-				rs = stmt.executeQuery();
-			} else if (!category.isEmpty()) {
-				stmt = conn.prepareStatement(searchGetEventQueryCategory());
-				stmt.setString(1, "%" + category + "%");
-				stmt.setInt(2, length);
-				rs = stmt.executeQuery();
-			} else {
-				stmt = conn.prepareStatement(searchGetEventQueryTitle());
-				stmt.setString(1, "%" + title + "%");
-				stmt.setInt(2, length);
-				rs = stmt.executeQuery();
-			}
-
-			stmt = conn.prepareStatement(searchGetEventByIdQuery());
-			if(category != null){
-				stmt.setString(2, category);
-			}else{
-				stmt.setString(2, "''");
-			}
-			if(title != null){
-				stmt.setString(1, "%" + title + "%");
-			}else{
-				stmt.setString(1, "%%");
+			stmt = conn.prepareStatement(searchGetUserByIdQuery());
+			if(!username.isEmpty()){
+				stmt.setString(1, "%" + username + "%");
 			}
 			length = (length <= 0) ? 10 : length;
-
-			//stmt.setInt(3, length);
+			stmt.setInt(2, length);
 			ResultSet rs = stmt.executeQuery();
-			
 			long oldestTimestamp = 0;
 			while (rs.next()) {
-				Event event = new Event();
-
-				event.setId(rs.getInt("id"));
-				event.setCoordX(rs.getString("coord_x"));
-				event.setCoordY(rs.getString("coord_y"));
-				event.setCategory(rs.getString("category"));
-				event.setDescription(rs.getString("description"));
-				event.setOwner(rs.getString("owner"));
-				event.setState(rs.getString("state"));
-				event.setPublicEvent(rs.getBoolean(9));
-				event.setCreationDate(rs.getTimestamp("creation_date")
-						.getTime());
-				event.setEventDate(rs.getDate(11));
-				oldestTimestamp = rs.getTimestamp("creation_date").getTime();
-				events.addEvent(event);
+				User user = new User();
+				user.setUsername(rs.getString("username"));
+				user.setName(rs.getString("name"));
+				user.setEmail(rs.getString("email"));
+				user.setRegisterDate(rs.getTimestamp("register_date").getTime());
+				oldestTimestamp = rs.getTimestamp("register_date").getTime();
+				users.addUser(user);
 			}
-			events.setOldestTimestamp(oldestTimestamp);
+			users.setOldestTimestamp(oldestTimestamp);
 		} catch (SQLException e) {
 			throw new ServerErrorException(e.getMessage(),
 					Response.Status.INTERNAL_SERVER_ERROR);
@@ -317,26 +278,14 @@ public class UserResource {
 			}
 		}
 
-		return events;
+		return users;
 
 	}
 	
-	private String searchGetEventByIdQuery() {
-		
-		return "SELECT * FROM events WHERE title like ? or category = ?";
-	}
-	private String searchGetEventQueryComplete() {
-		return "SELECT * FROM events WHERE category = ? OR title LIKE ? LIMIT ?";
+	private String searchGetUserByIdQuery() {
+		return "SELECT * FROM users WHERE username like ? LIMIT ?";
 	}
 
-	private String searchGetEventQueryCategory() {
-		return "SELECT * FROM events WHERE category = ? LIMIT ?";
-	}
-
-	private String searchGetEventQueryTitle() {
-		return "SELECT * FROM events WHERE title LIKE ? LIMIT ?";
-	}
-	*/
 	@PUT
 	@Path("/{username}")
 	@Consumes(MediaType.GVENT_API_USER)
@@ -583,7 +532,5 @@ public class UserResource {
 	private String buildDeleteFriend() {
 		return "DELETE FROM friends WHERE username_a = ? AND username_b = ?";
 	}
-	
-	
 
 }
