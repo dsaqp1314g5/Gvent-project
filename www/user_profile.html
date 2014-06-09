@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>Geolocalization Events (GVent)</title>
+<meta name="generator" content="Bootply" />
+
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<link
+	href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!--[if lt IE 9]>
+          <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+<!--<link href="css/theme.css" rel="stylesheet"> -->
+<link href="css/business-casual.css" rel="stylesheet">
+-->
+
+
+<!-- style para map container -->
+<style>
+#map-container {
+	height: 300px
+}
+</style>
+</head>
+
+<body>
+
+
+	<!-- Barra de navegación fija on top -->
+	<div class="navbar navbar-fixed-top header">
+		<div class="navbar navbar-default" id="subnav">
+			<div class="col-md-12">
+				<div class="navbar-header">
+
+
+					<!-- Menu desplegable izquierda barra navegación -->
+					<a href="#" style="margin-left: 15px;"
+						class="navbar-btn btn btn-default btn-plus dropdown-toggle"
+						data-toggle="dropdown"><i class="glyphicon glyphicon-home"
+						style="color: #dd1111;"></i> GVent Menu <small><i
+							class="glyphicon glyphicon-chevron-down"></i></small></a>
+					<ul class="nav dropdown-menu">
+
+						<li><a href="home.html"><i
+								class="glyphicon glyphicon-home" style="color: #1111dd;"></i>
+								Home</a></li>
+						<li><a href="user_profile.html"><i
+								class="glyphicon glyphicon-user" style="color: #1111dd;"></i>
+								Profile</a></li>
+						<li><a href="create_event.html"><i
+								class="glyphicon glyphicon-dashboard" style="color: #0000aa;"></i>
+								Crear evento</a></li>
+						<li><a href="events.html"><i
+								class="glyphicon glyphicon-inbox" style="color: #11dd11;"></i>
+								Eventos</a></li>
+						<li class="nav-divider"></li>
+						<li><a href="#"><i class="glyphicon glyphicon-cog"
+								style="color: #dd1111;"></i> Configuraciones</a></li>
+						<li><a href="#"><i class="glyphicon glyphicon-plus"></i>
+								Más..</a></li>
+					</ul>
+
+
+
+					<!-- Botones derecha barra navegación -->
+					<button type="button" class="navbar-toggle" data-toggle="collapse"
+						data-target="#navbar-collapse2">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+
+				</div>
+				<div class="collapse navbar-collapse" id="navbar-collapse2">
+					<ul class="nav navbar-nav navbar-right">
+						<li class="active" id="user_loged"></li>
+						<li><a href="index.html" role="button">Logout</a></li>
+						<li><a href="#aboutModal" role="button" data-toggle="modal">About</a></li>
+						<li><a href="#" id="btnToggle"><i
+								class="glyphicon glyphicon-th-large"></i></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--main-->
+	<p style="margin-top: 60px">
+	<div class="container">
+		<div class="row">
+
+			<div class="box">
+
+				<!--nombre usuario-->
+				<div class="col-sm-10" id="username"></div>
+
+				<!--avatar-->
+				<div class="col-sm-2">
+					<a href="user_profile.html" class="pull-right"><img
+						title="profile image" class="img-circle img-responsive"
+						src="http://fotouser.miarroba.st/5e44274e/300/mcbeth.jpg"></a>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-3">
+						<!--left col-->
+
+						<ul class="list-group" id="result_profile">
+							<li class="list-group-item text-muted">Perfil de usuario</li>
+
+						</ul>
+
+
+
+					</div>
+					<!--/col-3-->
+
+
+					<div class="col-sm-9">
+
+						<ul class="nav nav-tabs" id="myTab">
+							<li class="active"><a href="#home" data-toggle="tab">Mis
+									eventos</a></li>
+							<li><a href="#messages" data-toggle="tab">Comentarios</a></li>
+							<li><a href="#friends" data-toggle="tab" id="friends">Amigos</a></li>
+							<li><a href="#settings" data-toggle="tab">Settings</a></li>
+						</ul>
+
+						<div class="tab-content">
+							<div class="tab-pane active" id="home">
+								<div class="table-responsive">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>Nombre evento</th>
+												<th>Categoria</th>
+												<th>Popularidad</th>
+												<th>Estado</th>
+											</tr>
+										</thead>
+										<tbody id="result_my_events">
+
+										</tbody>
+									</table>
+									<div class="row">
+										<div class="col-md-4 col-md-offset-4 text-center">
+											<ul class="pagination" id="myPager"></ul>
+										</div>
+									</div>
+								</div>
+								<!--/table-resp-->
+
+
+							</div>
+							<!--/tab-pane-->
+							<div class="tab-pane" id="messages">
+
+								<h2></h2>
+
+								<ul class="list-group">
+									<li class="list-group-item text-muted">Inbox</li>
+									<li class="list-group-item text-right"><a href="#"
+										class="pull-left">Here is your a link to the latest
+											summary report from the..</a> 2.13.2014</li>
+									<li class="list-group-item text-right"><a href="#"
+										class="pull-left">Hi Joe, There has been a request on your
+											account since that was..</a> 2.11.2014</li>
+									<li class="list-group-item text-right"><a href="#"
+										class="pull-left">Nullam sapien massaortor. A lobortis
+											vitae, condimentum justo...</a> 2.11.2014</li>
+									<li class="list-group-item text-right"><a href="#"
+										class="pull-left">Thllam sapien massaortor. A lobortis
+											vitae, condimentum justo...</a> 2.11.2014</li>
+									<li class="list-group-item text-right"><a href="#"
+										class="pull-left">Wesm sapien massaortor. A lobortis
+											vitae, condimentum justo...</a> 2.11.2014</li>
+									<li class="list-group-item text-right"><a href="#"
+										class="pull-left">For therepien massaortor. A lobortis
+											vitae, condimentum justo...</a> 2.11.2014</li>
+									<li class="list-group-item text-right"><a href="#"
+										class="pull-left">Also we, havesapien massaortor. A
+											lobortis vitae, condimentum justo...</a> 2.11.2014</li>
+									<li class="list-group-item text-right"><a href="#"
+										class="pull-left">Swedish chef is assaortor. A lobortis
+											vitae, condimentum justo...</a> 2.11.2014</li>
+
+								</ul>
+
+							</div>
+							<!--/tab-pane-->
+
+							<div class="tab-pane" id="result_friends">
+								<div class="well well-sm">
+									<div class="media">
+										<a class="thumbnail pull-left" href="#"> <img
+											class="media-object"
+											src="http://4.bp.blogspot.com/_ruNlIBRjvas/TKELf3_tOTI/AAAAAAAAAOU/YOmEdNftT7A/s320/foto19-fin-ret.jpg"
+											height="70" width="70">
+										</a>
+										<div class="media-body">
+											<h4 class="media-heading">Mari Conde Playa</h4>
+											<p>
+												<span class="label label-info">69 photos</span> <span
+													class="label label-primary">859 followers</span>
+											</p>
+											<p>
+												<a href="#" class="btn btn-xs btn-default"><span
+													class="glyphicon glyphicon-comment"></span> Message</a> <a
+													href="#" class="btn btn-xs btn-default"><span
+													class="glyphicon glyphicon-heart"></span> Favorite</a> <a
+													href="#" class="btn btn-xs btn-default"><span
+													class="glyphicon glyphicon-ban-circle"></span> Unfollow</a>
+											</p>
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="well well-sm">
+									<div class="media">
+										<a class="thumbnail pull-left" href="#"> <img
+											class="media-object"
+											src="https://avatars2.githubusercontent.com/u/6709107?s=70"
+											height="70" width="70">
+										</a>
+										<div class="media-body">
+											<h4 class="media-heading">nbRuben</h4>
+											<p>
+												<span class="label label-info">10 photos</span> <span
+													class="label label-primary">89 followers</span>
+											</p>
+											<p>
+												<a href="#" class="btn btn-xs btn-default"><span
+													class="glyphicon glyphicon-comment"></span> Message</a> <a
+													href="#" class="btn btn-xs btn-default"><span
+													class="glyphicon glyphicon-heart"></span> Favorite</a> <a
+													href="#" class="btn btn-xs btn-default"><span
+													class="glyphicon glyphicon-ban-circle"></span> Unfollow</a>
+											</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="well well-sm">
+									<div class="media">
+										<a class="thumbnail pull-left" href="#"> <img
+											class="media-object"
+											src="https://avatars1.githubusercontent.com/u/6719063?s=70"
+											height="70" width="70">
+										</a>
+										<div class="media-body">
+											<h4 class="media-heading">Mikiodelg</h4>
+											<p>
+												<span class="label label-info">11 photos</span> <span
+													class="label label-primary">88 followers</span>
+											</p>
+											<p>
+												<a href="#" class="btn btn-xs btn-default"><span
+													class="glyphicon glyphicon-comment"></span> Message</a> <a
+													href="#" class="btn btn-xs btn-default"><span
+													class="glyphicon glyphicon-heart"></span> Favorite</a> <a
+													href="#" class="btn btn-xs btn-default"><span
+													class="glyphicon glyphicon-ban-circle"></span> Unfollow</a>
+											</p>
+										</div>
+									</div>
+								</div>
+
+
+							</div>
+							<!--/tab-pane-->
+
+
+							<div class="tab-pane" id="settings">
+
+
+								<hr>
+
+								<form class="form" action="##" method="post"
+									id="registrationForm">
+
+									<div class="form-group">
+										<div class="col-xs-6">
+											<label for="first_name"><h4>Nombre</h4></label> <input
+												type="text" class="form-control" name="first_name"
+												id="first_name" placeholder="Nombre"
+												title="Escribe tu nombre.">
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-xs-6">
+											<label for="mobile"><h4>Movil</h4></label> <input
+												type="number" class="form-control" name="mobile" id="mobile"
+												placeholder="Escribe aqui tu número de movil"
+												title="Escribe aqui tu número de movil.">
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-xs-12">
+											<label for="website"><h4>Web</h4></label> <input type="url"
+												class="form-control" name="website" id="website"
+												placeholder="Escribe aqui tu web personal"
+												title="Escribe aqui tu web personal.">
+										</div>
+									</div>
+
+
+									<div class="form-group">
+										<div class="col-xs-6">
+											<label for="email"><h4>Email</h4></label> <input type="email"
+												class="form-control" name="email" id="email"
+												placeholder="your@email.com" title="Escribe aqui tu email.">
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-xs-6">
+											<label for="location"><h4>Ciudad</h4></label> <input
+												type="text" class="form-control" id="location"
+												placeholder="Nombre de tu ciudad"
+												title="Escribe aqui el nombre de tu ciudad">
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-xs-6">
+											<label for="password"><h4>Password</h4></label> <input
+												type="password" class="form-control" name="password"
+												id="password" placeholder="password"
+												title="enter your password.">
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-xs-6">
+											<label for="password2"><h4>Verifica tu password</h4></label>
+											<input type="password" class="form-control" name="password2"
+												id="password2" placeholder="password2"
+												title="enter your password2.">
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-xs-6">
+											<label for="birthday"><h4>Fecha de nacimiento</h4></label> <input
+												type="date" class="form-control" name="birthday"
+												id="birthday" placeholder="dd/mm/aaaa" title="dd/mm/aaaa">
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-xs-6">
+											<label class="control-label"><h4>Genero</h4></label>
+											<div class="controls">
+												<div id="gender" name="gender" class="btn-group"
+													data-toggle="buttons-radio">
+													<button type="button" class="btn btn-primary"
+														id="edit_varon">Hombre</button>
+													<button type="button" class="btn btn-primary"
+														id="edit_hembra">Mujer</button>
+												</div>
+											</div>
+										</div>
+									</div>
+
+
+									<div class="form-group">
+										<div class="control-group">
+											<div class="col-xs-12">
+												<div class="checkbox">
+													<label> <input type="checkbox" value="" id="accept">
+														Acepto los terminos y condiciones de Gvent
+													</label>
+												</div>
+											</div>
+										</div>
+									</div>
+
+
+
+									<div class="form-group">
+										<div class="col-xs-12">
+											<br>
+											<button class="btn btn-lg btn-success" type="submit">
+												<i class="glyphicon glyphicon-ok-sign" id="edit_guardar"></i>
+												Guardar
+											</button>
+											<button class="btn btn-lg" type="reset">
+												<i class="glyphicon glyphicon-repeat"></i> Borrar
+											</button>
+										</div>
+									</div>
+
+								</form>
+
+							</div>
+						</div>
+					</div>
+					<!--/tab-pane-->
+				</div>
+				<!--/tab-content-->
+
+			</div>
+			<!--/col-9-->
+
+			<br>
+
+			<div class="clearfix"></div>
+			<footer>
+				<hr>
+				<div class="col-md-12 text-center">
+					<p>
+						<a href="index.html" target="_ext">Gestiona tus eventos con
+							GVent</a><br>Proyecto de DSA realizado por Alejandro, Miguel y
+						Rubén
+				</div>
+				<hr>
+			</footer>
+		</div>
+		<!--/row-->
+
+		</p>
+		<!--/main-->
+
+
+
+
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script
+			src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script
+			src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+
+
+
+
+		<!--about modal-->
+		<div id="aboutModal" class="modal fade" tabindex="-1" role="dialog"
+			aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true"></button>
+						<h2 class="text-center">About</h2>
+					</div>
+					<div class="modal-body">
+						<div class="col-md-12 text-center">
+							Esta es la web del proyecto de:<br>
+							<ul>
+								<li>Alejandro Martin</li>
+								<li>Miguel Delgado</li>
+								<li>Rubén</li>
+							</ul>
+							Esta basada en el template de Google plus de Bootply
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn" data-dismiss="modal" aria-hidden="true">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+		<!-- JavaScript jQuery code from Bootply.com editor -->
+
+		<script type='text/javascript'>
+        
+        $(document).ready(function() {
+        
+            /* toggle layout */
+			$('#btnToggle').click(function(){
+				if ($(this).hasClass('on')) {
+					$('#main .col-md-6').addClass('col-md-4').removeClass('col-md-6');
+					$(this).removeClass('on');
+				}
+				else {
+					$('#main .col-md-4').addClass('col-md-6').removeClass('col-md-4');
+					$(this).addClass('on');
+				}
+			});
+        
+        });
+        
+        </script>
+
+
+		<script type="text/javascript" src="./js/api.js"></script>
+		<script type="text/javascript" src="./js/linkheaders.js"></script>
+		<script type="text/javascript" src="./js/jquery.base64.js"></script>
+		<script type="text/javascript" src="./js/uritemplate.js"></script>
+		<script type="text/javascript" src="./js/user.profile.js"></script>
+		<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+</body>
+</html>

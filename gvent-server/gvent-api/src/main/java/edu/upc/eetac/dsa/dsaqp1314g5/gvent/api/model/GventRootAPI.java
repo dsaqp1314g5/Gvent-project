@@ -11,12 +11,14 @@ import org.glassfish.jersey.linking.InjectLinks;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.GventRootAPIResource;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.MediaType;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.EventResource;
+import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.UserResource;
 
 public class GventRootAPI {
 	@InjectLinks({
 		@InjectLink(resource = GventRootAPIResource.class, style = Style.ABSOLUTE, rel = "self bookmark home", title = "Gvent Root API", method = "getRootAPI"),
 		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "events", title = "Latest events", type = MediaType.GVENT_API_EVENT_COLLECTION),
-		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "create-event", title = "Latest events", type = MediaType.GVENT_API_EVENT) })
+		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "create-event", title = "Latest events", type = MediaType.GVENT_API_EVENT),  
+		@InjectLink(resource = UserResource.class, style = Style.ABSOLUTE, rel = "create-user", title = "Create user", type = MediaType.GVENT_API_USER)  })
 	private List<Link> links;
 
 	public List<Link> getLinks() {

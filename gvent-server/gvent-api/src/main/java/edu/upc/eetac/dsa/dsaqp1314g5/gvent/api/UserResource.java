@@ -73,6 +73,7 @@ public class UserResource {
 			while (rs.next()) {
 				User user = new User();
 				user.setUsername(rs.getString("username"));
+				user.setUserpass(rs.getString("userpass"));
 				user.setName(rs.getString("name"));
 				user.setEmail(rs.getString("email"));
 				user.setRegisterDate(rs.getTimestamp("register_date").getTime());
@@ -153,6 +154,7 @@ public class UserResource {
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				user.setUsername(rs.getString("username"));
+				user.setUserpass(rs.getString("userpass"));
 				user.setName(rs.getString("name"));
 				user.setEmail(rs.getString("email"));
 				user.setRegisterDate(rs.getTimestamp("register_date").getTime());
@@ -199,8 +201,9 @@ public class UserResource {
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
 			stmt.setString(1, user.getUsername());
-			stmt.setString(2, user.getName());
-			stmt.setString(3, user.getEmail());
+			stmt.setString(2, user.getUserpass());
+			stmt.setString(3, user.getName());
+			stmt.setString(4, user.getEmail());
 			stmt.executeUpdate();
 			ResultSet rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
@@ -226,7 +229,7 @@ public class UserResource {
 	}
 
 	private String buildInsertUser() {
-		return "INSERT INTO users(username, name, email) value (?, ?, ?)";
+		return "INSERT INTO users(username, userpass, name, email) value (?, ?, ?, ?)";
 	}
 	
 	@GET
@@ -259,6 +262,7 @@ public class UserResource {
 			while (rs.next()) {
 				User user = new User();
 				user.setUsername(rs.getString("username"));
+				user.setUserpass(rs.getString("userpass"));
 				user.setName(rs.getString("name"));
 				user.setEmail(rs.getString("email"));
 				user.setRegisterDate(rs.getTimestamp("register_date").getTime());
@@ -305,9 +309,10 @@ public class UserResource {
 			stmt = conn.prepareStatement(buildUpdateUser());
 
 			stmt.setString(1, user.getUsername());
-			stmt.setString(2, user.getName());
-			stmt.setString(3, user.getEmail());
-			stmt.setString(4, username);
+			stmt.setString(2, user.getUserpass());
+			stmt.setString(3, user.getName());
+			stmt.setString(4, user.getEmail());
+			stmt.setString(5, username);
 			int rows = stmt.executeUpdate();
 			if (rows == 1)
 				user = getUserFromDatabase(user.getUsername());
@@ -332,7 +337,7 @@ public class UserResource {
 	}
 	
 	private String buildUpdateUser() {
-		return "UPDATE users SET username=ifnull(?, username), name=ifnull(?, name), email=ifnull(?, email)  WHERE username=?";
+		return "UPDATE users SET username=ifnull(?, username), userpass=ifnull(?, userpass), name=ifnull(?, name), email=ifnull(?, email)  WHERE username=?";
 	}
 	
 	@DELETE
@@ -461,6 +466,7 @@ public class UserResource {
 			while (rs.next()) {
 				User user = new User();
 				user.setUsername(rs.getString("username"));
+				user.setUserpass(rs.getString("userpass"));
 				user.setName(rs.getString("name"));
 				user.setEmail(rs.getString("email"));
 				user.setRegisterDate(rs.getTimestamp("register_date").getTime());
@@ -531,6 +537,169 @@ public class UserResource {
 
 	private String buildDeleteFriend() {
 		return "DELETE FROM friends WHERE username_a = ? AND username_b = ?";
+	}
+	
+	//// EVENTS
+	
+	
+	@GET
+	@Path("/{username}/events")
+	@Produces(MediaType.GVENT_API_EVENT_COLLECTION)
+	public EventCollection getEvents(@QueryParam("length") int length,
+			@QueryParam("before") long before, @QueryParam("after") long after, @PathParam("username") String username) {
+		EventCollection events = new EventCollection();
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			boolean updateFromLast = after > 0;
+			stmt = conn.prepareStatement(buildGetEventsQuery(updateFromLast));
+			if (updateFromLast) {
+				stmt.setTimestamp(1, new Timestamp(after));
+			} else {
+				if (before > 0)
+					stmt.setTimestamp(1, new Timestamp(before));
+				else
+					stmt.setTimestamp(1, null);
+				length = (length <= 0) ? 20 : length;
+				stmt.setInt(3, length);
+			}
+			//String username = username; //security.getUserPrincipal().getName();
+			stmt.setString(2, username);
+			ResultSet rs = stmt.executeQuery();
+			boolean first = true;
+			long oldestTimestamp = 0;
+			while (rs.next()) {
+				Event event = new Event();
+				event.setId(rs.getInt("id"));
+				event.setTitle(rs.getString("title"));
+				event.setCoordX(rs.getString("coord_x"));
+				event.setCoordY(rs.getString("coord_y"));
+				event.setCategory(rs.getString("category"));
+				event.setDescription(rs.getString("description"));
+				event.setOwner(rs.getString("owner"));
+				event.setState(rs.getString("state"));
+				event.setPublicEvent(rs.getBoolean(9));
+				event.setCreationDate(rs.getTimestamp("creation_date")
+						.getTime());
+				event.setEventDate(rs.getDate(11));
+				event.setPopularity(rs.getInt("popularity"));
+				event.setPuntuation(rs.getDouble("puntuation"));
+				event.setVotes(rs.getInt("votes"));
+				oldestTimestamp = rs.getTimestamp("creation_date").getTime();
+				if (first) {
+					first = false;
+					events.setNewestTimestamp(event.getCreationDate());
+				}
+				events.addEvent(event);
+			}
+			events.setOldestTimestamp(oldestTimestamp);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		return events;
+	}
+
+	private String buildGetEventsQuery(boolean updateFromLast) {
+		if (updateFromLast)
+			return "SELECT e.* FROM events e WHERE e.creation_date > ? AND e.owner= ? ORDER BY creation_date DESC";
+		else
+			return "SELECT e.* FROM events e  WHERE e.creation_date < ifnull(?, now()) AND e.owner= ? ORDER BY creation_date DESC LIMIT ?";
+	}
+	
+	@GET
+	@Path("/{username}/events/followed")
+	@Produces(MediaType.GVENT_API_EVENT_COLLECTION)
+	public EventCollection getEventsFollowed(@QueryParam("length") int length,
+			@QueryParam("before") long before, @QueryParam("after") long after, @PathParam("username") String username) {
+		EventCollection events = new EventCollection();
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			boolean updateFromLast = after > 0;
+			stmt = conn.prepareStatement(buildGetEventsFollowedQuery(updateFromLast));
+			if (updateFromLast) {
+				stmt.setTimestamp(1, new Timestamp(after));
+			} else {
+				if (before > 0)
+					stmt.setTimestamp(1, new Timestamp(before));
+				else
+					stmt.setTimestamp(1, null);
+				length = (length <= 0) ? 20 : length;
+				stmt.setInt(3, length);
+			}
+			//String username = username; //security.getUserPrincipal().getName();
+			stmt.setString(2, username);
+			ResultSet rs = stmt.executeQuery();
+			boolean first = true;
+			long oldestTimestamp = 0;
+			while (rs.next()) {
+				Event event = new Event();
+				event.setId(rs.getInt("id"));
+				event.setTitle(rs.getString("title"));
+				event.setCoordX(rs.getString("coord_x"));
+				event.setCoordY(rs.getString("coord_y"));
+				event.setCategory(rs.getString("category"));
+				event.setDescription(rs.getString("description"));
+				event.setOwner(rs.getString("owner"));
+				event.setState(rs.getString("state"));
+				event.setPublicEvent(rs.getBoolean(9));
+				event.setCreationDate(rs.getTimestamp("creation_date")
+						.getTime());
+				event.setEventDate(rs.getDate(11));
+				event.setPopularity(rs.getInt("popularity"));
+				event.setPuntuation(rs.getDouble("puntuation"));
+				event.setVotes(rs.getInt("votes"));
+				oldestTimestamp = rs.getTimestamp("creation_date").getTime();
+				if (first) {
+					first = false;
+					events.setNewestTimestamp(event.getCreationDate());
+				}
+				events.addEvent(event);
+			}
+			events.setOldestTimestamp(oldestTimestamp);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		return events;
+	}
+
+	private String buildGetEventsFollowedQuery(boolean updateFromLast) {
+		if (updateFromLast)
+			return "SELECT e.*, r.username FROM event_users r, events e WHERE e.creation_date > ? AND r.username= ? AND e.id = r.event_id ORDER BY creation_date DESC";
+		else
+			return "SELECT e.*, r.username FROM event_users r, events e  WHERE e.creation_date < ifnull(?, now()) AND r.username= ? AND  e.id = r.event_id ORDER BY creation_date DESC LIMIT ?";
 	}
 
 }

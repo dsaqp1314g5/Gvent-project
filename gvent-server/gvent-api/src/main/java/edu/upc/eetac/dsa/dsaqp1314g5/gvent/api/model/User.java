@@ -21,9 +21,11 @@ public class User {
 		@InjectLink(resource = UserResource.class, style = Style.ABSOLUTE, rel = "self edit", title = "user", type = MediaType.GVENT_API_USER, method = "getUser", bindings = @Binding(name = "username", value = "${instance.username}")) })
 	private List<Link> links;
 	private String username;
+	private String userpass; 
 	private String name;
 	private String email;
 	private long registerDate;
+	
 	
 	public List<Link> getLinks() {
 		return links;
@@ -36,6 +38,12 @@ public class User {
 	}
 	public void setUsername(String username) {
 		this.username = username;
+	}	
+	public String getUserpass() {
+		return userpass;
+	}
+	public void setUserpass(String userpass) {
+		this.userpass = userpass;
 	}
 	public String getName() {
 		return name;

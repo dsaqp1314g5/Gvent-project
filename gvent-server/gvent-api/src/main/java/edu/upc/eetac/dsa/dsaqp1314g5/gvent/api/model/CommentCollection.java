@@ -22,6 +22,8 @@ public class CommentCollection {
 		@InjectLink(value = "/events/{eventId}/comments?before={before}", style = Style.ABSOLUTE, rel = "previous", title = "Previous comments", type = MediaType.GVENT_API_COMMENT_COLLECTION, bindings = { @Binding(name = "before", value = "${instance.oldestTimestamp}") }),
 		@InjectLink(value = "/events/{eventId}/comments?after={after}", style = Style.ABSOLUTE, rel = "current", title = "Newest comments", type = MediaType.GVENT_API_COMMENT_COLLECTION, bindings = { @Binding(name = "after", value = "${instance.newestTimestamp}") }) })*/
   /// FALTAN INJECT LINKTS PARA PAGINAR 
+	@InjectLinks({
+		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "create-comment", title = "Create comment", type = MediaType.GVENT_API_COMMENT) })
 	private List<Link> links;
 	private List<Comment> comments;
 	private long newestTimestamp;

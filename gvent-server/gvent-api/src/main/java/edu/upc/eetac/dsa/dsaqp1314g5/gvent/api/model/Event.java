@@ -20,7 +20,8 @@ public class Event {
 	@InjectLinks({
 		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "events", title = "Latest events", type = MediaType.GVENT_API_EVENT_COLLECTION),
 		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "self edit", title = "Event", type = MediaType.GVENT_API_EVENT, method = "getEvent", bindings = @Binding(name = "eventId", value = "${instance.id}")),
-		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "comments", title = "Comments", type = MediaType.GVENT_API_COMMENT_COLLECTION, method = "getComments", bindings = @Binding(name = "eventId", value = "${instance.id}"))})
+		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "comments", title = "Comments", type = MediaType.GVENT_API_COMMENT_COLLECTION, method = "getComments", bindings = @Binding(name = "eventId", value = "${instance.id}")),
+		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "create-comment", title = "Comment", type = MediaType.GVENT_API_COMMENT, method = "createComment", bindings = @Binding(name = "eventId", value = "${instance.id}"))})
 	private List<Link> links;
 	private int id;
 	private String title;
@@ -33,6 +34,11 @@ public class Event {
 	private boolean publicEvent;
 	private long creationDate;
 	private Date eventDate;
+	private int popularity;
+	private double puntuation;
+	private int votes;
+	
+	
 	public List<Link> getLinks() {
 		return links;
 	}
@@ -105,7 +111,26 @@ public class Event {
 	public void setEventDate(Date eventDate) {
 		this.eventDate = eventDate;
 	}
+
+	public int getPopularity() {
+		return popularity;
+	}
+	public void setPopularity(int popularity) {
+		this.popularity = popularity;
+	}
 	
+	public double getPuntuation() {
+		return puntuation;
+	}
+	public void setPuntuation(double puntuation) {
+		this.puntuation = puntuation;
+	}
+	public int getVotes() {
+		return votes;
+	}
+	public void setVotes(int votes) {
+		this.votes = votes;
+	}
 	
 
 }

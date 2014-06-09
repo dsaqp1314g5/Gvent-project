@@ -44,7 +44,7 @@ public class EventResource {
 
 	@GET
 	@Produces(MediaType.GVENT_API_EVENT_COLLECTION)
-	public EventCollection getEvents(@QueryParam("length") int length,
+	public EventCollection getEvents(/*@QueryParam("sort") String sort, */@QueryParam("length") int length,
 			@QueryParam("before") long before, @QueryParam("after") long after) {
 		EventCollection events = new EventCollection();
 
@@ -59,7 +59,14 @@ public class EventResource {
 		PreparedStatement stmt = null;
 		try {
 			boolean updateFromLast = after > 0;
-			stmt = conn.prepareStatement(buildGetEventsQuery(updateFromLast));
+			stmt = conn.prepareStatement(buildGetEventsQuery(updateFromLast)); //////////// FALTA ORDERNAR POR SORT
+			/*if(sort.equals("last")){
+				stmt = conn.prepareStatement(buildGetEventsQuery(updateFromLast));
+			}else if(sort.equals("popular")){
+				stmt = conn.prepareStatement(buildGetEventsQueryPopular(updateFromLast));
+			}else{
+				stmt = conn.prepareStatement(buildGetEventsQueryPuntuation(updateFromLast));
+			}*/
 			if (updateFromLast) {
 				stmt.setTimestamp(1, new Timestamp(after));
 			} else {
@@ -76,6 +83,7 @@ public class EventResource {
 			while (rs.next()) {
 				Event event = new Event();
 				event.setId(rs.getInt("id"));
+				event.setTitle(rs.getString("title"));
 				event.setCoordX(rs.getString("coord_x"));
 				event.setCoordY(rs.getString("coord_y"));
 				event.setCategory(rs.getString("category"));
@@ -86,6 +94,9 @@ public class EventResource {
 				event.setCreationDate(rs.getTimestamp("creation_date")
 						.getTime());
 				event.setEventDate(rs.getDate(11));
+				event.setPopularity(rs.getInt("popularity"));
+				event.setPuntuation(rs.getDouble("puntuation"));
+				event.setVotes(rs.getInt("votes"));
 				oldestTimestamp = rs.getTimestamp("creation_date").getTime();
 				if (first) {
 					first = false;
@@ -114,6 +125,20 @@ public class EventResource {
 			return "SELECT * FROM events WHERE creation_date > ? ORDER BY creation_date DESC";
 		else
 			return "SELECT * FROM events WHERE creation_date < ifnull(?, now()) ORDER BY creation_date DESC LIMIT ?";
+	}
+	
+	private String buildGetEventsQueryPopular(boolean updateFromLast) {
+		if (updateFromLast)
+			return "SELECT * FROM events WHERE creation_date > ? ORDER BY popularity DESC";
+		else
+			return "SELECT * FROM events WHERE creation_date < ifnull(?, now()) ORDER BY popularity DESC LIMIT ?";
+	}
+	
+	private String buildGetEventsQueryPuntuation(boolean updateFromLast) {
+		if (updateFromLast)
+			return "SELECT * FROM events WHERE creation_date > ? ORDER BY puntuation DESC";
+		else
+			return "SELECT * FROM events WHERE creation_date < ifnull(?, now()) ORDER BY puntuation DESC LIMIT ?";
 	}
 
 	@GET
@@ -162,18 +187,18 @@ public class EventResource {
 			stmt = conn.prepareStatement(buildGetEventByIdQuery());
 			stmt.setInt(1, Integer.valueOf(eventId));
 			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				event.setId(rs.getInt("id"));
-				event.setCoordX(rs.getString("coord_x"));
-				event.setCoordY(rs.getString("coord_y"));
-				event.setCategory(rs.getString("category"));
-				event.setDescription(rs.getString("description"));
-				event.setOwner(rs.getString("owner"));
-				event.setState(rs.getString("state"));
-				event.setPublicEvent(rs.getBoolean(9));
-				event.setCreationDate(rs.getTimestamp("creation_date")
-						.getTime());
-				event.setEventDate(rs.getDate(11));
+			if (rs.next()) {event.setId(rs.getInt("id"));
+			event.setTitle(rs.getString("title"));
+			event.setCoordX(rs.getString("coord_x"));
+			event.setCoordY(rs.getString("coord_y"));
+			event.setCategory(rs.getString("category"));
+			event.setDescription(rs.getString("description"));
+			event.setOwner(rs.getString("owner"));
+			event.setState(rs.getString("state"));
+			event.setPublicEvent(rs.getBoolean(9));
+			event.setCreationDate(rs.getTimestamp("creation_date")
+					.getTime());
+			event.setEventDate(rs.getDate(11));
 			} else {
 				throw new NotFoundException("There's no event with id="
 						+ eventId);
@@ -295,8 +320,8 @@ public class EventResource {
 			long oldestTimestamp = 0;
 			while (rs.next()) {
 				Event event = new Event();
-
 				event.setId(rs.getInt("id"));
+				event.setTitle(rs.getString("title"));
 				event.setCoordX(rs.getString("coord_x"));
 				event.setCoordY(rs.getString("coord_y"));
 				event.setCategory(rs.getString("category"));
@@ -359,7 +384,10 @@ public class EventResource {
 			stmt.setString(7, event.getState());
 			stmt.setBoolean(8, event.isPublicEvent());
 			stmt.setDate(9, event.getEventDate());
-			stmt.setInt(10, Integer.valueOf(eventId));
+			stmt.setInt(10, event.getPopularity());
+			stmt.setDouble(11, event.getPuntuation());
+			stmt.setInt(12, event.getVotes());
+			stmt.setInt(13, Integer.valueOf(eventId));
 			int rows = stmt.executeUpdate();
 			if (rows == 1)
 				event = getEventFromDatabase(eventId);
@@ -384,7 +412,7 @@ public class EventResource {
 	}
 	
 	private String buildUpdateEvent() {
-		return "UPDATE events SET title=ifnull(?, title), coord_x=ifnull(?, coord_x), coord_y=ifnull(?, coord_y), category=ifnull(?, category), description=ifnull(?, description), owner=ifnull(?, owner), state=ifnull(?, state), public=ifnull(?, public), event_date=ifnull(?, event_date)  WHERE id=?";
+		return "UPDATE events SET title=ifnull(?, title), coord_x=ifnull(?, coord_x), coord_y=ifnull(?, coord_y), category=ifnull(?, category), description=ifnull(?, description), owner=ifnull(?, owner), state=ifnull(?, state), public=ifnull(?, public), event_date=ifnull(?, event_date), popularity=ifnull(?, popularity), puntuation=ifnull(?, puntuation), votes=ifnull(?, votes) WHERE id=?";
 	}
 	
 	@DELETE
@@ -701,6 +729,7 @@ public class EventResource {
 			while (rs.next()) {
 				User user = new User();
 				user.setUsername(rs.getString("username"));
+				user.setUserpass(rs.getString("userpass"));
 				user.setName(rs.getString("name"));
 				user.setEmail(rs.getString("email"));
 				user.setRegisterDate(rs.getTimestamp("register_date").getTime());
