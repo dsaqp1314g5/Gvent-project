@@ -24,8 +24,8 @@ $("#settings_btn").click(function(e){
 
 $("#follow_btn").click(function(e){
 	joinEvent();
-});
-
+}); 
+ 
 
 $(document).ready(function(){
 	eventURL=$.cookie('link-event');
