@@ -10,7 +10,8 @@ var PASSWORD = "";
 var eventURL;
 var eventID;
 var commentsURL;
-
+var lat;
+var lng;
 $("#post_comment").click(function(e){
 	postComment();
 });
@@ -47,6 +48,9 @@ function loadEvent(url){
 		var year = date.getFullYear();
 		var event_date = day+'/'+month+'/'+year;
 		var eventID= event.id;
+
+		console.log("la coord X es" + event.coordX);
+		console.log("la coord Y es" + event.coordY);
 		$('<h3>' + event.owner + '</h3>').appendTo($('#event_owner'));
 		$('<h1>' + event.title + '</h1>').appendTo($('#info_event'));
 		$('<h2>' + event.category + '</h2>').appendTo($('#info_event'));
@@ -56,35 +60,46 @@ function loadEvent(url){
 		if(event.owner ==  $.cookie('username')){
 			$('#event_settings').show();
 		}
-		init_map(event.coordX, event.coordY);
+		lat = event.coordX;
+		lng = event.coordY;
+		initialize();
 		loadComments(eventURL+'/comments');
 	});
 }
 
-
-function init_map(coordX, coordY) {
-	var var_location = new google.maps.LatLng(coordX, coordY);
-
-	var var_mapoptions = {
-		center : var_location,
-		zoom : 14
+function initialize() {
+	var myLatlng = new google.maps.LatLng(lat, lng);
+	var mapOptions = {
+		zoom: 8,
+		center: myLatlng 
 	};
+	map = new google.maps.Map(document.getElementById('map-canvas'),
+    mapOptions);
+	
+	 var contentString = '<div id="content">'+
+      '<div id="siteNotice">'+
+      '</div>'+'<div id="bodyContent">'+'<a>Aqui va info del evento</a>'+
+      '</div>'+
+      '</div>';
 
-	var var_marker = new google.maps.Marker({
-		position : var_location,
-		map : var_map,
-		title : "EPSC UPC"
+	
+	var infowindow = new google.maps.InfoWindow({
+		content: contentString
+	});
+	 
+	var marker = new google.maps.Marker({
+      position: myLatlng,
+      map: map,
+      title: 'Hello World!'
+	});
+	
+	google.maps.event.addListener(marker, 'click', function() {
+		infowindow.open(map,marker);
 	});
 
-	var var_map = new google.maps.Map(document
-			.getElementById("map-container"), var_mapoptions);
-
-	var_marker.setMap(var_map);
-
-	google.maps.event.addDomListener(window, 'load', init_map);
 }
 
-
+google.maps.event.addDomListener(window, 'load', initialize);
 
 
 function loadComments(url){
