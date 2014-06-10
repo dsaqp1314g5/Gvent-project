@@ -44,10 +44,10 @@ public class EventResource {
 
 	@GET
 	@Produces(MediaType.GVENT_API_EVENT_COLLECTION)
-	public EventCollection getEvents(/*@QueryParam("sort") String sort, */@QueryParam("length") int length,
+	public EventCollection getEvents(/*@QueryParam("sort") String sort,*/ @QueryParam("length") int length,
 			@QueryParam("before") long before, @QueryParam("after") long after) {
 		EventCollection events = new EventCollection();
-
+		//System.out.println("el valor de sort es " +sort);
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -761,5 +761,49 @@ public class EventResource {
 			return "SELECT u.*, r.username FROM event_users r, users u WHERE u.register_date > ? AND r.event_id= ? AND u.username=r.username ORDER BY register_date DESC";
 		else
 			return "SELECT u.*, r.username FROM event_users r, users u  WHERE u.register_date < ifnull(?, now()) AND r.event_id= ? AND u.username=r.username ORDER BY register_date DESC LIMIT ?";
+	}
+	
+	@POST
+	@Path("/{eventId}/users")
+	@Consumes(MediaType.GVENT_API_USER)
+	@Produces(MediaType.GVENT_API_USER)
+	public void addUser(User user, @PathParam("eventId") String eventId) {
+		System.out.println("llego");
+		// validateSting(Event); VALIDARRRRRRR
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			String sql = buildInsertUser();
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+			// stmt.setString(1, security.getUserPrincipal().getName()); QUE
+			// OBTENGA EL USERNAME DEL LOGEADO
+			stmt.setString(1, user.getUsername());
+			stmt.setInt(2, Integer.valueOf(eventId));
+			stmt.executeUpdate();
+
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+	}
+
+	private String buildInsertUser() {
+		return "INSERT INTO event_users(username, event_id) VALUES(?,?)";
 	}
 }
