@@ -12,6 +12,8 @@ var eventID;
 var commentsURL;
 var lat;
 var lng;
+var eventTitle;
+var link_owner;
 $("#post_comment").click(function(e){
 	postComment();
 });
@@ -19,6 +21,11 @@ $("#post_comment").click(function(e){
 $("#settings_btn").click(function(e){
 	window.location.replace("/edit_event.html");
 });
+
+$("#follow_btn").click(function(e){
+	joinEvent();
+});
+
 
 $(document).ready(function(){
 	eventURL=$.cookie('link-event');
@@ -48,7 +55,7 @@ function loadEvent(url){
 		var year = date.getFullYear();
 		var event_date = day+'/'+month+'/'+year;
 		var eventID= event.id;
-
+		eventTitle=event.title;
 		console.log("la coord X es" + event.coordX);
 		console.log("la coord Y es" + event.coordY);
 		$('<h3>' + event.owner + '</h3>').appendTo($('#event_owner'));
@@ -59,6 +66,8 @@ function loadEvent(url){
 		//console.log(event.getLink());
 		if(event.owner ==  $.cookie('username')){
 			$('#event_settings').show();
+		}else{
+			$('#event_follow').show();
 		}
 		lat = event.coordX;
 		lng = event.coordY;
@@ -107,7 +116,15 @@ function loadComments(url){
 		console.log(commentCollection.comments.length);
 		$.each(commentCollection.comments, function(index, item){
 			var comment = new Comment(item);
-			$('<hr><div class="well well-sm"><div class="media" ><div class="media-body"><class="media-heading">'+comment.comment+'<p><a class="btn btn-xs btn-default pull-right">'+comment.username+'</a></p></div></div></div>').appendTo($('#result_comments'));
+			var date = new Date(comment.lastModified);
+			var hours = date.getHours();
+			var minutes = date.getMinutes();
+			var seconds = date.getSeconds();
+			var day = date.getDate();
+			var month = date.getMonth() + 1;
+			var year = date.getFullYear();
+			var date_format = day+'/'+month+'/'+year+' '+hours+':'+minutes+':'+seconds;
+			$('<div class="well well-sm"><div class="media" ><div class="media-body"><class="media-heading">'+comment.comment+'<p><a class="btn btn-xs btn-default pull-right"><span class="glyphicon glyphicon-comment"></span> '+comment.username+'</a><a class="btn btn-xs btn-default pull-right"><span class="glyphicon glyphicon-dashboard"></span> '+date_format+'</a></p></div></div></div>').appendTo($('#result_comments'));
 		});
 	});
 	
@@ -129,7 +146,15 @@ function loadFollowers(url){
 		$.each(userCollection.users, function(index,item){
 			var user = new User(item);
 			console.log(user.name);
-			$('<div class="well well-sm"><div class="media" ><a class="thumbnail pull-left"> <img class="media-object" src="./img/error.png" height="70" width="70"></a><div class="media-body"><h4 class="media-heading">'+user.name+'</h4><p><a href="'+user.getLink('self').href+'"class="btn btn-xs btn-default"><span class="glyphicon glyphicon-comment"></span>Ver perfil</a></p></div></div></div>').appendTo($('#result_followers'));
+			var link = $('<div class="well well-sm"><div class="media" ><a class="thumbnail pull-left"> <img class="media-object" src="./img/error.png" height="70" width="70"></a><div class="media-body"><h4 class="media-heading">'+user.name+'</h4><p><a class="btn btn-xs btn-default" id="profile"><span class="glyphicon glyphicon-user"></span>Ver perfil</a></p></div></div></div>');
+			link.click(function(e){
+				 $.cookie('link-friend',  user.getLink('self').href);
+				 window.location.replace("/friend_profile.html");
+			});
+			
+			var div = $('<div></div>');
+			div.append(link);
+			$('#result_followers').append(div);
 		});
 	});	
 }
@@ -162,4 +187,15 @@ function postComment(){
 		createComment(eventURL+'/comments', type, JSON.stringify(comment), function(comment){
 			window.location.reload();
 		});
+}
+
+function joinEvent(){
+	var user = new Object();
+	user.username = $.cookie('username');
+	url = 'http://localhost:8080/gvent-api/events/1/users';
+	type = 'application/vnd.gvent.api.user+json';
+	followEvent(url, type, JSON.stringify(user), function(user){
+		window.location.reload();
+	});
+	
 }

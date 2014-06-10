@@ -124,6 +124,24 @@ function createEvent(url, type, event, success){
 	});
 }
 
+function followEvent(url, type, user, success){
+
+	$.ajax({
+		url : url,
+		type : 'POST',
+		crossDomain : true,
+		contentType: type, 
+		data: user
+	})
+	.done(function (data, status, jqxhr) {
+		//var user = $.parseJSON(jqxhr.responseText);
+		success(user);
+	})
+    .fail(function (jqXHR, textStatus) {
+		console.log(textStatus);
+	});
+}
+
 function getEvent(url, success){
 	$.ajax({
 		url : url,

@@ -33,9 +33,14 @@ function loadEvents(url){
 	var events = getEvents(url, function (eventCollection){
 		$.each(eventCollection.events, function(index,item){
 			var event = new Event(item);
-			var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a>');
+			if(event.state == "Abierto"){
+				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:green;color:white;height:3px;"></div>');
+			}else{
+				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:red;color:white;height:3px;"></div>');
+			}
 			var commentsURL = event.getLink("comments").href;
 			//loadComments(commentsURL, event.title, event.getLink("self").href);
+			
 			console.log(commentsURL);
 			//console.log(event.getLink("create-comment"));
 			 link.click(function(e){ 
@@ -54,12 +59,20 @@ function loadEvents(url){
 function loadComments(url, title, eventURL){
 	var comments = getComments(url, function(commentCollection){
 		console.log(commentCollection.comments.length);
-		if(commentCollection.comments.length != 0){
+		/*if(commentCollection.comments.length != 0){
 			$('<br><a href="'+ eventURL + '"><h6>'+ title + '</h6><br>').appendTo($('#result_last_comments'));
-		}
+		}*/
 		$.each(commentCollection.comments, function(index, item){
 			var comment = new Comment(item);
-			$('<div class="well well-sm"><div class="media" ><div class="media-body"><class="media-heading">'+comment.comment+'<p><a class="btn btn-xs btn-default pull-right"><span class="glyphicon glyphicon-comment"></span> '+comment.username+'</a></p></div></div></div>').appendTo($('#result_last_comments'));
+			var date = new Date(comment.lastModified);
+			var hours = date.getHours();
+			var minutes = date.getMinutes();
+			var seconds = date.getSeconds();
+			var day = date.getDate();
+			var month = date.getMonth() + 1;
+			var year = date.getFullYear();
+			var date_format = day+'/'+month+'/'+year+' '+hours+':'+minutes+':'+seconds;
+			$('<div class="well well-sm"><a class="btn btn-xs btn-default pull-left">'+title+'</a><br><div class="media" ><div class="media-body"><class="media-heading">'+comment.comment+'<p><a class="btn btn-xs btn-default pull-right"><span class="glyphicon glyphicon-comment"></span> '+comment.username+'</a><a class="btn btn-xs btn-default pull-right"><span class="glyphicon glyphicon-dashboard"></span> '+date_format+'</a></p></div></div></div>').appendTo($('#result_last_comments'));
 		});
 	});
 	
@@ -69,7 +82,11 @@ function loadMyEvents(url){
 	var events = getEvents(url, function (eventCollection){
 		$.each(eventCollection.events, function(index,item){
 			var event = new Event(item);
-			var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a>');
+			if(event.state == "Abierto"){
+				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:green;color:white;height:3px;"></div>');
+			}else{
+				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:red;color:white;height:3px;"></div>');
+			}
 			 link.click(function(e){ 
 				 e.preventDefault();
 				 $.cookie('link-event',  event.getLink("self").href);
@@ -88,7 +105,11 @@ function loadFollowedEvents(url){
 	var events = getEvents(url, function (eventCollection){
 		$.each(eventCollection.events, function(index,item){
 			var event = new Event(item);
-			var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a>');
+			if(event.state == "Abierto"){
+				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:green;color:white;height:3px;"></div>');
+			}else{
+				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:red;color:white;height:3px;"></div>');
+			}
 			var commentsURL = event.getLink("comments").href;
 			loadComments(commentsURL, event.title, event.getLink("self").href);
 			 link.click(function(e){ 

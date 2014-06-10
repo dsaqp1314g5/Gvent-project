@@ -768,7 +768,6 @@ public class EventResource {
 	@Consumes(MediaType.GVENT_API_USER)
 	@Produces(MediaType.GVENT_API_USER)
 	public void addUser(User user, @PathParam("eventId") String eventId) {
-		System.out.println("llego");
 		// validateSting(Event); VALIDARRRRRRR
 		Connection conn = null;
 		try {
