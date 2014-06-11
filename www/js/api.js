@@ -135,7 +135,7 @@ function followEvent(url, type, user, success){
 	})
 	.done(function (data, status, jqxhr) {
 		//var user = $.parseJSON(jqxhr.responseText);
-		success(user);
+		success();
 	})
     .fail(function (jqXHR, textStatus) {
 		console.log(textStatus);

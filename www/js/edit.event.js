@@ -26,6 +26,13 @@ $('#save_settings').click(function(e){
 	});
 });
 
+
+$('#logout_btn').click(function(e){
+	console.log("click2");
+	$.cookie('username', '');
+	$.cookie('link-user', '');
+});
+
 $(document).ready(function(){
 	eventURL=$.cookie('link-event');
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));

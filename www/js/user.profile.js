@@ -21,6 +21,13 @@ $("#friends").click(function(e){
 });
 
 
+
+$('#logout_btn').click(function(e){
+	console.log("click2");
+	$.cookie('username', '');
+	$.cookie('link-user', '');
+});
+
 $(document).ready(function(){
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;

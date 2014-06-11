@@ -12,6 +12,13 @@ $('#create_btn').click(function(e){
 	createEvent();
 });
 
+
+$('#logout_btn').click(function(e){
+	console.log("click2");
+	$.cookie('username', '');
+	$.cookie('link-user', '');
+});
+
 function initialize() {
   var mapOptions = {
     zoom: 15

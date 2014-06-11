@@ -16,6 +16,13 @@ $("#search_btn").click(function(e){
 	loadEventsBy(eventsURL, $('#search_event').val());
 });
 
+
+$('#logout_btn').click(function(e){
+	console.log("click2");
+	$.cookie('username', '');
+	$.cookie('link-user', '');
+});
+
 $(document).ready(function(){
 
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));

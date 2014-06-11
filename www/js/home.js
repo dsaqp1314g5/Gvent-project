@@ -13,6 +13,12 @@ $(document).ready(function() {
 	console.log($.cookie('username'));
 });
 
+$('#logout_btn').click(function(e){
+	console.log("click2");
+	$.cookie('username', '');
+	$.cookie('link-user', '');
+});
+
 var eventsURL;
 var eventName;
 $(document).ready(function(){

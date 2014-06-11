@@ -25,7 +25,14 @@ $("#settings_btn").click(function(e){
 $("#follow_btn").click(function(e){
 	joinEvent();
 }); 
- 
+
+
+$('#logout_btn').click(function(e){
+	console.log("click2");
+	$.cookie('username', '');
+	$.cookie('link-user', '');
+});
+
 
 $(document).ready(function(){
 	eventURL=$.cookie('link-event');
