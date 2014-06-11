@@ -11,9 +11,10 @@ var PASSWORD = "";
 
 
 $(document).ready(function(){
-		if($.cookie('username')!=''){
+		if($.cookie('username')!=null){
 			window.location.replace("/home.html");
 		}else{
+			console.log("cookie : " +$.cookie('username'));
 			loadRootAPI(function(rootAPI){
 			loadEvents(rootAPI.getLink('events').href);
 			// loadPopularEvents(rootAPI.getLink('events').href);

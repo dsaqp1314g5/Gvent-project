@@ -1,5 +1,9 @@
 var GVENT_API_HOME="http://localhost:8080/gvent-api";
 
+function deleteCookie( name ) {
+	  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	}
+
 function Link(rel, linkheader){
 	this.rel = rel;
 	this.href = decodeURIComponent(linkheader.find(rel).template().template);

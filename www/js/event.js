@@ -28,9 +28,7 @@ $("#follow_btn").click(function(e){
 
 
 $('#logout_btn').click(function(e){
-	console.log("click2");
-	$.cookie('username', '');
-	$.cookie('link-user', '');
+	deleteCookie('username');
 });
 
 
@@ -56,7 +54,7 @@ $(document).ready(function(){
 
 function loadEvent(url){
 	getEvent(url, function (event){
-		var date = new Date(event.creationDate);
+		var date = new Date(event.eventDate);
 		var day = date.getDate();
 		var month = date.getMonth() + 1;
 		var year = date.getFullYear();

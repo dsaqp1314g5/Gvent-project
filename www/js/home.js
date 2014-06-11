@@ -9,9 +9,7 @@ var PASSWORD = "";
 
 
 $('#logout_btn').click(function(e){
-	console.log("click2");
-	$.cookie('username', '');
-	$.cookie('link-user', '');
+	deleteCookie('username');
 });
 
 var eventsURL;
