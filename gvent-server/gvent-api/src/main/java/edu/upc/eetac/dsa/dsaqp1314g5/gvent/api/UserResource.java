@@ -28,6 +28,8 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.Comment;
+import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.CommentCollection;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.Event;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.EventCollection;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.User;
@@ -700,6 +702,78 @@ public class UserResource {
 			return "SELECT e.*, r.username FROM event_users r, events e WHERE e.creation_date > ? AND r.username= ? AND e.id = r.event_id ORDER BY creation_date DESC";
 		else
 			return "SELECT e.*, r.username FROM event_users r, events e  WHERE e.creation_date < ifnull(?, now()) AND r.username= ? AND  e.id = r.event_id ORDER BY creation_date DESC LIMIT ?";
+	}
+	
+	//////COMMENTS
+	
+	@GET
+	@Path("/{username}/comments")
+	@Produces(MediaType.GVENT_API_COMMENT_COLLECTION)
+	public CommentCollection getComments(@QueryParam("length") int length,
+			@QueryParam("before") long before, @QueryParam("after") long after, @PathParam("username") String username) {
+		CommentCollection comments = new CommentCollection();
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			boolean updateFromLast = after > 0;
+			stmt = conn.prepareStatement(buildGetCommentsQuery(updateFromLast));
+			if (updateFromLast) {
+				stmt.setTimestamp(1, new Timestamp(after));
+			} else {
+				if (before > 0)
+					stmt.setTimestamp(1, new Timestamp(before));
+				else
+					stmt.setTimestamp(1, null);
+				length = (length <= 0) ? 20 : length;
+				stmt.setInt(3, length);
+			}
+			//String username = username; //security.getUserPrincipal().getName();
+			stmt.setString(2, username);
+			ResultSet rs = stmt.executeQuery();
+			boolean first = true;
+			long oldestTimestamp = 0;
+			while (rs.next()) {
+				Comment comment = new Comment();
+				comment.setId(rs.getInt("id"));
+				comment.setUsername(rs.getString("username"));
+				comment.setEventId(rs.getInt("event_id"));
+				comment.setComment(rs.getString("comment"));
+				comment.setLastModified(rs.getTimestamp("last_modified").getTime());
+				oldestTimestamp = rs.getTimestamp("last_modified").getTime();
+				if (first) {
+					first = false;
+					comments.setNewestTimestamp(comment.getLastModified());
+				}
+				comments.addComment(comment);
+			}
+			comments.setOldestTimestamp(oldestTimestamp);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		return comments;
+	}
+
+	private String buildGetCommentsQuery(boolean updateFromLast) {
+		if (updateFromLast)
+			return "SELECT * FROM comments c WHERE c.last_modified > ? AND c.username=? ORDER BY c.last_modified DESC";
+		else
+			return "SELECT * FROM comments c WHERE c.last_modified < ifnull(?, now()) AND c.username=?  ORDER BY c.last_modified DESC LIMIT ?";
 	}
 
 }
