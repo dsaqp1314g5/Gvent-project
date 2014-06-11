@@ -384,7 +384,7 @@ public class UserResource {
 	@Path("/{username}")
 	@Consumes(MediaType.GVENT_API_USER)
 	@Produces(MediaType.GVENT_API_USER)
-	public void addFriend(@PathParam("username") String username, @QueryParam("friend") String friend) {
+	public void addFriend(@PathParam("username") String username, User user) {
 		// validateSting(Event); VALIDARRRRRRR
 		Connection conn = null;
 		try {
@@ -399,7 +399,7 @@ public class UserResource {
 			String sql = buildInsertFriend();
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(1, username);
-			stmt.setString(2, friend);
+			stmt.setString(2, user.getUsername());
 			stmt.executeUpdate();
 			/*stmt.setString(1, user.getUsername());
 			stmt.setString(2, user.getName());
@@ -504,8 +504,9 @@ public class UserResource {
 	
 	
 	@DELETE
+	@Consumes(MediaType.GVENT_API_USER)
 	@Path("/{username}/friends")
-	public void deleteFriend(@PathParam("username") String username,  @QueryParam("friend") String friend) {
+	public void deleteFriend(@PathParam("username") String username,  User user) {
 		//VALIDAR
 		Connection conn = null;
 		try {
@@ -519,7 +520,7 @@ public class UserResource {
 		try {
 			stmt = conn.prepareStatement(buildDeleteFriend());
 			stmt.setString(1, username);
-			stmt.setString(2, friend);
+			stmt.setString(2, user.getUsername());
 			int rows = stmt.executeUpdate();
 			if (rows == 0)
 				throw new NotFoundException("There is no user with username = "

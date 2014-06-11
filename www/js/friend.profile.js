@@ -19,12 +19,24 @@ $('#logout_btn').click(function(e){
 });
 
 $('#delete_friend').click(function(e){
-	
+	var user = new Object();
+	user.username = usernameFriend;
+	url = $.cookie('link-user')+'/friends';
+	type = 'application/vnd.gvent.api.user+json';
+	deleteFriend(url, type, JSON.stringify(user), function(user){
+		window.location.reload();
+	});
 });
 
 
 $('#add_friend').click(function(e){
-	
+	var user = new Object();
+	user.username = usernameFriend;
+	url = $.cookie('link-user');
+	type = 'application/vnd.gvent.api.user+json';
+	addFriend(url, type, JSON.stringify(user), function(user){
+		window.location.reload();
+	});
 });
 
 $(document).ready(function(){

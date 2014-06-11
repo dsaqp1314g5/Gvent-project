@@ -275,6 +275,22 @@ function createUser(url, type, user, success){
 	});
 }
 
+function addFriend(url, type, user, success){
+	$.ajax({
+		url : url,
+		type : 'POST',
+		crossDomain : true,
+		contentType: type, 
+		data: user
+	})
+	.done(function (data, status, jqxhr) {
+		success(user);
+	})
+    .fail(function (jqXHR, textStatus) {
+		console.log(textStatus);
+	});
+}
+
 function getUser(url, success){
 	$.ajax({
 		url : url,
@@ -324,6 +340,23 @@ function deleteUser(url, success){
 		console.log(textStatus);
 	});
 }
+
+function deleteFriend(url, type, user, success){
+	$.ajax({
+		url : url,
+		type : 'DELETE',
+		crossDomain : true,
+		contentType: type, 
+		data: user
+	})
+	.done(function (data, status, jqxhr) {
+		success(user);
+	})
+    .fail(function (jqXHR, textStatus) {
+		console.log(textStatus);
+	});
+}
+
 
 
 //// COMMENTS
