@@ -26,11 +26,12 @@ function loadEvents(url){
 	var events = getEvents(url, function (eventCollection){
 		$.each(eventCollection.events, function(index,item){
 			var event = new Event(item);
-			var link = $('<a id="event-link" class="list-group-item">'+event.title +'</a>');
+			var link = $('<div class="well well-sm"><div class="media" ><div class="media-body"><h6 class="media-heading"><strong>'+event.title+'</strong></h6><h7>'+event.description+'</h7></div></div></div>');
 			/*
 			 * link.click(function(e){ e.preventDefault();
 			 * loadEvent($(e.target).attr('href')); return false; });
 			 */
+			
 			var div = $('<div></div>')
 			div.append(link);
 			$('#result_last_events').append(div);

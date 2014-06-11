@@ -194,6 +194,20 @@ function deleteEvent(url, success){
 	});
 }
 
+function leaveEvent(url, success){
+	$.ajax({
+		url : url,
+		type : 'DELETE',
+		crossDomain : true
+	})
+	.done(function (data, status, jqxhr) {
+		//var sting = $.parseJSON(jqxhr.responseText);
+		success();
+	})
+    .fail(function (jqXHR, textStatus) {
+		console.log(textStatus);
+	});
+}
 
 //USERS
 

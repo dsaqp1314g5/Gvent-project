@@ -13,20 +13,22 @@ $(document).ready(function() {
 	console.log($.cookie('username'));
 });
 
-$("#friends").click(function(e){
-	console.log("hola");
-	e.preventDefault();
-	var myFriendsURL=$.cookie('link-friend')+'/friends';
-	loadMyFriends(myFriendsURL);
-});
-
-
-
+var usernameFriend;
 $('#logout_btn').click(function(e){
 	deleteCookie('username');
 });
 
+$('#delete_friend').click(function(e){
+	
+});
+
+
+$('#add_friend').click(function(e){
+	
+});
+
 $(document).ready(function(){
+
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;
 		//loadEvents(rootAPI.getLink('events').href);
@@ -34,12 +36,13 @@ $(document).ready(function(){
 	;
 	var followedEventsURL=$.cookie('link-friend')+'/events/followed';
 	var myEventsURL=$.cookie('link-friend')+'/events';
-	var myFriendsURL=$.cookie('link-friend')+'/friends';
+	var FriendsURL=$.cookie('link-friend')+'/friends';
 	var myCommentsURL=$.cookie('link-friend') +'/comments';
 	var myURL =$.cookie('link-friend');
 	loadMyEvents(myEventsURL);
-	loadMyFriends(myFriendsURL);
+	loadFriends(FriendsURL);
 	loadMyProfile(myURL);
+	loadMyFriends($.cookie('link-user')+'/friends');
 	loadMyComments(myCommentsURL);
 });
 
@@ -61,7 +64,7 @@ function loadMyEvents(url){
 	});
 	
 }
-function loadMyFriends(url){
+function loadFriends(url){
 	console.log("hola");
 	var users = getUsers(url, function(userCollection){
 		console.log("hola2");
@@ -83,6 +86,28 @@ function loadMyFriends(url){
 	});	
 }
 
+function loadMyFriends(url){
+	var users = getUsers(url, function(userCollection){
+
+		var alreadyFriend;
+		$.each(userCollection.users, function(index,item){
+			var user = new User(item);
+			console.log("usernameFriend : " +usernameFriend);
+			if(user.username == usernameFriend){
+				alreadyFriend = true;
+			}
+		});
+
+		if(alreadyFriend){
+			$('#delete_friend').show();
+		}else{
+			$('#add_friend').show();
+		}
+	});	
+	
+}
+
+
 function loadMyProfile(url){
 	console.log("la url es " + url);
 	getUser(url, function(user){
@@ -91,6 +116,8 @@ function loadMyProfile(url){
 		var month = date.getMonth() + 1;
 		var year = date.getFullYear();
 		var register_date = day+'/'+month+'/'+year;
+
+		usernameFriend=user.username;
 		$('<h1>'+ user.username +'</h1>').appendTo($('#username'));
 		$('<li class="list-group-item text-right"><span class="pull-left"><strong>Fecha de registro</strong></span>' + register_date + '</li>').appendTo($('#result_profile'));
 		$('<li class="list-group-item text-right"><span class="pull-left"><strong>Nombre</strong></span>' + user.name + '</li>').appendTo($('#result_profile'));

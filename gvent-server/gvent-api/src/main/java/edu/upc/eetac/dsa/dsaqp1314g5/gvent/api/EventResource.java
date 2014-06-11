@@ -805,4 +805,45 @@ public class EventResource {
 	private String buildInsertUser() {
 		return "INSERT INTO event_users(username, event_id) VALUES(?,?)";
 	}
+	
+
+	@DELETE
+	@Path("/{eventId}/users")
+	public void deleteUser(@PathParam("eventId") String eventId, @QueryParam("user") String username) {
+		//VALIDAR
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(buildDeleteUser());
+			stmt.setInt(1, Integer.valueOf(eventId));
+			stmt.setString(2, username);
+
+			int rows = stmt.executeUpdate();
+			if (rows == 0)
+				throw new NotFoundException("There is no user with username = "
+						+ username);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
+
+	private String buildDeleteUser() {
+		return "DELETE FROM event_users WHERE event_id=? AND username = ?";
+	}
+	
 }

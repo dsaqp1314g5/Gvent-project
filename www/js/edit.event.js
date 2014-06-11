@@ -22,7 +22,7 @@ $('#save_settings').click(function(e){
 	event.eventDate = $('#event_date').val();
 	//console.log(document.getElementById("select_category").value);
 	event.category = document.getElementById("select_category").value;
-	alert("X " + event.coordX + " Y " +event.coordY );
+	//alert("X " + event.coordX + " Y " +event.coordY );
 	var type = 'application/vnd.gvent.api.event+json';
 	//console.log("llego");
 	updateEvent(eventURL, type, JSON.stringify(event), function(event){

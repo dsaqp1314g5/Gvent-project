@@ -79,7 +79,7 @@ html,body {
 						<li><a href="create_event.html"><i
 								class="glyphicon glyphicon-dashboard" style="color: #0000aa;"></i>
 								Crear evento</a></li>
-						<li><a href="eventos.html"><i
+						<li><a href="events.html"><i
 								class="glyphicon glyphicon-inbox" style="color: #11dd11;"></i>
 								Eventos</a></li>
 						<li class="nav-divider"></li>
@@ -158,19 +158,17 @@ html,body {
 							<div class="form-group">
 
 								<div class="col-xs-6">
-									<label><h4>Coordenada X</h4></label> <input
-										type="text" class="form-control" name="first_name"
-										id="coordX" placeholder="41.275161"
-										title="Escribe tu nombre.">
+									<label for="first_name"><h4>Coordenada X</h4></label> <input
+										type="text" class="form-control" 
+										id="event_coordX" placeholder="coordenada X">
 								</div>
 							</div>
 							<div class="form-group">
 
 								<div class="col-xs-6">
-									<label ><h4>Coordenada Y</h4></label> <input
-										type="text" class="form-control" name="last_name"
-										id="coordY" placeholder="1.986894"
-										title="Escribe tus apellidos.">
+									<label for="last_name"><h4>Coordenada Y</h4></label> <input
+										type="text" class="form-control"
+										id="event_coordY" placeholder="coordenada Y">
 								</div>
 							</div>
 
@@ -184,12 +182,12 @@ html,body {
 							<div class="form-group">
 								<div class="col-xs-6">
 									<label for="mobile"><h4>Tipo de evento</h4></label> <select
-										class="form-control" id="category">
-										<option>Deportes</option>
-										<option>Musica</option>
-										<option>Ocio</option>
-										<option>Cultural</option>
-										<option>Otros</option>
+										class="form-control" id="select_category">
+										<option value="deportivo">Deportivo</option>
+										<option value="musical">Musical</option>
+										<option value="cultural">Cultural</option>
+										<option value="ocio">Ocio</option>
+										<option value="otros">Otros</option>
 									</select>
 								</div>
 

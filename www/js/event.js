@@ -26,6 +26,9 @@ $("#follow_btn").click(function(e){
 	joinEvent();
 }); 
 
+$("#unfollow_btn").click(function(e){
+	leaveEvent();
+}); 
 
 $('#logout_btn').click(function(e){
 	deleteCookie('username');
@@ -71,8 +74,6 @@ function loadEvent(url){
 		//console.log(event.getLink());
 		if(event.owner ==  $.cookie('username')){
 			$('#event_settings').show();
-		}else{
-			$('#event_follow').show();
 		}
 		lat = event.coordX;
 		lng = event.coordY;
@@ -148,6 +149,7 @@ function loadMyEvents(url){
 
 function loadFollowers(url){
 	var users = getUsers(url, function(userCollection){
+		var following;
 		$.each(userCollection.users, function(index,item){
 			var user = new User(item);
 			console.log(user.name);
@@ -157,10 +159,22 @@ function loadFollowers(url){
 				 window.location.replace("/friend_profile.html");
 			});
 			
+			if(user.username == $.cookie("username")){
+				following = true;
+			}
+			
 			var div = $('<div></div>');
 			div.append(link);
 			$('#result_followers').append(div);
 		});
+		
+		if(following){
+			$('#event_follow').hide();
+			$('#event_unfollow').show();
+		}else{
+			$('#event_follow').show();
+			$('#event_unfollow').hide();
+		}
 	});	
 }
 
@@ -204,3 +218,14 @@ function joinEvent(){
 	});
 	
 }
+
+function leaveEvent(){
+	var user = new Object();
+	user.username = $.cookie('username');
+	url = 'http://localhost:8080/gvent-api/events/1/users';
+	leaveEvent(url, function(user){
+		window.location.reload();
+	});
+	
+}
+
