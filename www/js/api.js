@@ -68,8 +68,6 @@ function Event(event){
 	this.creationDate = event.creationDate;
 	this.eventDate = event.eventDate;
 	this.popularity = event.popularity;
-	this.puntuation = event.puntuation;
-	this.votes = event.votes;
 	this.links = buildLinks(event.links);
 	
 	var instance = this;

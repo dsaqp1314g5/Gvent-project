@@ -64,8 +64,6 @@ public class EventResource {
 				stmt = conn.prepareStatement(buildGetEventsQuery(updateFromLast));
 			}else if(sort.equals("popular")){
 				stmt = conn.prepareStatement(buildGetEventsQueryPopular(updateFromLast));
-			}else{
-				stmt = conn.prepareStatement(buildGetEventsQueryPuntuation(updateFromLast));
 			}*/
 			if (updateFromLast) {
 				stmt.setTimestamp(1, new Timestamp(after));
@@ -95,8 +93,6 @@ public class EventResource {
 						.getTime());
 				event.setEventDate(rs.getDate(11));
 				event.setPopularity(rs.getInt("popularity"));
-				event.setPuntuation(rs.getDouble("puntuation"));
-				event.setVotes(rs.getInt("votes"));
 				oldestTimestamp = rs.getTimestamp("creation_date").getTime();
 				if (first) {
 					first = false;
@@ -132,13 +128,6 @@ public class EventResource {
 			return "SELECT * FROM events WHERE creation_date > ? ORDER BY popularity DESC";
 		else
 			return "SELECT * FROM events WHERE creation_date < ifnull(?, now()) ORDER BY popularity DESC LIMIT ?";
-	}
-	
-	private String buildGetEventsQueryPuntuation(boolean updateFromLast) {
-		if (updateFromLast)
-			return "SELECT * FROM events WHERE creation_date > ? ORDER BY puntuation DESC";
-		else
-			return "SELECT * FROM events WHERE creation_date < ifnull(?, now()) ORDER BY puntuation DESC LIMIT ?";
 	}
 
 	@GET
@@ -385,9 +374,7 @@ public class EventResource {
 			stmt.setBoolean(8, event.isPublicEvent());
 			stmt.setDate(9, event.getEventDate());
 			stmt.setInt(10, event.getPopularity());
-			stmt.setDouble(11, event.getPuntuation());
-			stmt.setInt(12, event.getVotes());
-			stmt.setInt(13, Integer.valueOf(eventId));
+			stmt.setInt(11, Integer.valueOf(eventId));
 			int rows = stmt.executeUpdate();
 			if (rows == 1)
 				event = getEventFromDatabase(eventId);
@@ -412,7 +399,7 @@ public class EventResource {
 	}
 	
 	private String buildUpdateEvent() {
-		return "UPDATE events SET title=ifnull(?, title), coord_x=ifnull(?, coord_x), coord_y=ifnull(?, coord_y), category=ifnull(?, category), description=ifnull(?, description), owner=ifnull(?, owner), state=ifnull(?, state), public=ifnull(?, public), event_date=ifnull(?, event_date), popularity=ifnull(?, popularity), puntuation=ifnull(?, puntuation), votes=ifnull(?, votes) WHERE id=?";
+		return "UPDATE events SET title=ifnull(?, title), coord_x=ifnull(?, coord_x), coord_y=ifnull(?, coord_y), category=ifnull(?, category), description=ifnull(?, description), owner=ifnull(?, owner), state=ifnull(?, state), public=ifnull(?, public), event_date=ifnull(?, event_date), popularity=ifnull(?, popularity) WHERE id=?";
 	}
 	
 	@DELETE

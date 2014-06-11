@@ -592,8 +592,6 @@ public class UserResource {
 						.getTime());
 				event.setEventDate(rs.getDate(11));
 				event.setPopularity(rs.getInt("popularity"));
-				event.setPuntuation(rs.getDouble("puntuation"));
-				event.setVotes(rs.getInt("votes"));
 				oldestTimestamp = rs.getTimestamp("creation_date").getTime();
 				if (first) {
 					first = false;
@@ -672,8 +670,6 @@ public class UserResource {
 						.getTime());
 				event.setEventDate(rs.getDate(11));
 				event.setPopularity(rs.getInt("popularity"));
-				event.setPuntuation(rs.getDouble("puntuation"));
-				event.setVotes(rs.getInt("votes"));
 				oldestTimestamp = rs.getTimestamp("creation_date").getTime();
 				if (first) {
 					first = false;

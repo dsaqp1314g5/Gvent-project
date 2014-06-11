@@ -99,8 +99,6 @@ function createEvent2(){
 	event.publicEvent = true;
 	event.date = $('#event_date').val();
 	event.popularity = 0;
-	event.puntuation = 0;
-	event.votes = 0;
 	//console.log(eventsURL.type);
 	console.log(eventsURL.href);
 	console.log(eventsURL.type);
