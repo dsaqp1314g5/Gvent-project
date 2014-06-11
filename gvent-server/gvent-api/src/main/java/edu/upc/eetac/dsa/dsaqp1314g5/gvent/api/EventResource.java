@@ -795,8 +795,9 @@ public class EventResource {
 	
 
 	@DELETE
+	@Consumes(MediaType.GVENT_API_USER)
 	@Path("/{eventId}/users")
-	public void deleteUser(@PathParam("eventId") String eventId, @QueryParam("user") String username) {
+	public void deleteUser(@PathParam("eventId") String eventId, User user) {
 		//VALIDAR
 		Connection conn = null;
 		try {
@@ -810,12 +811,12 @@ public class EventResource {
 		try {
 			stmt = conn.prepareStatement(buildDeleteUser());
 			stmt.setInt(1, Integer.valueOf(eventId));
-			stmt.setString(2, username);
+			stmt.setString(2, user.getUsername());
 
 			int rows = stmt.executeUpdate();
 			if (rows == 0)
 				throw new NotFoundException("There is no user with username = "
-						+ username);
+						+ user.getUsername());
 		} catch (SQLException e) {
 			throw new ServerErrorException(e.getMessage(),
 					Response.Status.INTERNAL_SERVER_ERROR);

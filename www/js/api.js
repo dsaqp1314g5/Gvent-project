@@ -192,11 +192,13 @@ function deleteEvent(url, success){
 	});
 }
 
-function leaveEvent(url, success){
+function unfollowEvent(url, type, user, success){
 	$.ajax({
 		url : url,
 		type : 'DELETE',
-		crossDomain : true
+		crossDomain : true,
+		contentType: type,
+		data: user
 	})
 	.done(function (data, status, jqxhr) {
 		//var sting = $.parseJSON(jqxhr.responseText);

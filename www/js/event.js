@@ -211,7 +211,7 @@ function postComment(){
 function joinEvent(){
 	var user = new Object();
 	user.username = $.cookie('username');
-	url = 'http://localhost:8080/gvent-api/events/1/users';
+	url = $.cookie('link-event')+'/users';//'http://localhost:8080/gvent-api/events/1/users';
 	type = 'application/vnd.gvent.api.user+json';
 	followEvent(url, type, JSON.stringify(user), function(user){
 		window.location.reload();
@@ -222,10 +222,10 @@ function joinEvent(){
 function leaveEvent(){
 	var user = new Object();
 	user.username = $.cookie('username');
-	url = 'http://localhost:8080/gvent-api/events/1/users';
-	leaveEvent(url, function(user){
+	url = $.cookie('link-event')+'/users';
+	type = 'application/vnd.gvent.api.user+json';
+	unfollowEvent(url, type, JSON.stringify(user), function(user){
 		window.location.reload();
 	});
-	
 }
 
