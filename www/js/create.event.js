@@ -14,7 +14,7 @@ $('#create_btn').click(function(e){
 
 function initialize() {
   var mapOptions = {
-    zoom: 6
+    zoom: 15
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
