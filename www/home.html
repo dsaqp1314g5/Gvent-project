@@ -200,14 +200,7 @@
 			</div>
 
 			<!-- Container con geolocalización y mapa -->
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4>Geolocalization on Google Maps</h4>
-				</div>
-				<div class="panel-body">
-					<div id="map-container" class="con-md-12"></div>
-				</div>
-			</div>
+			
 		</div>
 
 
@@ -323,33 +316,7 @@
 			</div>
 		</div>
 	</div>
-
-	<!--Script to create and load a map-->
-	<script>
-		function init_map() {
-			var var_location = new google.maps.LatLng(41.275161, 1.986894);
-
-			var var_mapoptions = {
-				center : var_location,
-				zoom : 14
-			};
-
-			var var_marker = new google.maps.Marker({
-				position : var_location,
-				map : var_map,
-				title : "EPSC UPC"
-			});
-
-			var var_map = new google.maps.Map(document
-					.getElementById("map-container"), var_mapoptions);
-
-			var_marker.setMap(var_map);
-
-		}
-
-		google.maps.event.addDomListener(window, 'load', init_map);
-	</script>
-
+	
 	<script>
 		// Activates the Carousel
 		$('.carousel').carousel({

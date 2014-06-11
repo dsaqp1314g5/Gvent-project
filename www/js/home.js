@@ -8,11 +8,6 @@ var PASSWORD = "";
  */
 
 
-$(document).ready(function() {
-	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
-	console.log($.cookie('username'));
-});
-
 $('#logout_btn').click(function(e){
 	console.log("click2");
 	$.cookie('username', '');
@@ -20,20 +15,42 @@ $('#logout_btn').click(function(e){
 });
 
 var eventsURL;
-var eventName;
+var followedEventsURL;
+var myEventsURL;
+var myFriendsURL;
 $(document).ready(function(){
+	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
+	console.log($.cookie('username'));
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;
 		loadEvents(rootAPI.getLink('events').href);
 	});
-	;
-	var followedEventsURL=$.cookie('link-user')+'/events/followed';
-	var myEventsURL=$.cookie('link-user')+'/events';
-	var myFriendsURL=$.cookie('link-user')+'/friends';
-	loadMyEvents(myEventsURL);
-	loadFollowedEvents(followedEventsURL);
-	loadMyFriends(myFriendsURL);
+	loadLinks($.cookie('link-user'));
+	//var followedEventsURL=$.cookie('link-user')+'/events/followed';
+	//var myEventsURL=$.cookie('link-user')+'/events';
+	//var myFriendsURL=$.cookie('link-user')+'/friends';
+	console.log("events url " + myEventsURL);
+	console.log("followed url " + followedEventsURL);
+	console.log("friends url " + myFriendsURL);
+	//loadMyEvents(myEventsURL);
+	//loadFollowedEvents(followedEventsURL);
+	//loadMyFriends(myFriendsURL);
 });
+
+function loadLinks(url){
+	getUser(url, function(user){
+		var userlog= new User(user);
+		console.log("obteniendo links");
+		console.log(userlog.getLink('followed').href);
+		followedEventsURL = userlog.getLink('followed').href;
+		myEventsURL = userlog.getLink('events').href;
+		myFriendsURL = userlog.getLink('friends').href;
+		console.log("he acbado");
+		loadMyEvents(myEventsURL);
+		loadFollowedEvents(followedEventsURL);
+		loadMyFriends(myFriendsURL);
+	});
+}
 
 function loadEvents(url){
 	var events = getEvents(url, function (eventCollection){
@@ -44,11 +61,8 @@ function loadEvents(url){
 			}else{
 				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:red;color:white;height:3px;"></div>');
 			}
-			var commentsURL = event.getLink("comments").href;
-			//loadComments(commentsURL, event.title, event.getLink("self").href);
-			
+			var commentsURL = event.getLink("comments").href;			
 			console.log(commentsURL);
-			//console.log(event.getLink("create-comment"));
 			 link.click(function(e){ 
 				 e.preventDefault();
 				 $.cookie('link-event',  event.getLink("self").href);
