@@ -21,6 +21,18 @@ $("#friends").click(function(e){
 });
 
 
+$('#edit_btn').click(function(e){
+	e.preventDefault();
+	/*var user = new Object();
+	user.username = usernameFriend;
+	url = $.cookie('link-user');
+	type = 'application/vnd.gvent.api.user+json';
+	addFriend(url, type, JSON.stringify(user), function(user){
+		window.location.reload();
+	});*/
+	window.location.replace("edit_profile.html");
+});
+
 
 $('#logout_btn').click(function(e){
 	deleteCookie('username');
