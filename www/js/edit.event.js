@@ -52,11 +52,6 @@ function loadEvent(url){
 	console.log("cargando evento");
 	getEvent(url, function (event){
 		console.log("obteniendo evento");
-		/*var date = new Date(event.creationDate);
-		var day = date.getDate();
-		var month = date.getMonth() + 1;
-		var year = date.getFullYear();
-		var event_date = year+'/'+month+'/'+day;*/
 		var eventID= event.id;
 		$('#event_title').val(event.title);
 		$('#event_description').text(event.description);
@@ -66,7 +61,6 @@ function loadEvent(url){
 		lat = event.coordX;
 		lng = event.coordY;
 		initialize();
-		//init_map(event.coordX, event.coordY);
 	});
 }
 

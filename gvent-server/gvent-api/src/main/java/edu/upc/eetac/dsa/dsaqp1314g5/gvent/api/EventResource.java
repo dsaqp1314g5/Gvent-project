@@ -44,10 +44,10 @@ public class EventResource {
 
 	@GET
 	@Produces(MediaType.GVENT_API_EVENT_COLLECTION)
-	public EventCollection getEvents(/*@QueryParam("sort") String sort,*/ @QueryParam("length") int length,
+	public EventCollection getEvents(@QueryParam("sort") String sort, @QueryParam("length") int length,
 			@QueryParam("before") long before, @QueryParam("after") long after) {
 		EventCollection events = new EventCollection();
-		//System.out.println("el valor de sort es " +sort);
+		if(sort==null) sort="last";
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -59,12 +59,12 @@ public class EventResource {
 		PreparedStatement stmt = null;
 		try {
 			boolean updateFromLast = after > 0;
-			stmt = conn.prepareStatement(buildGetEventsQuery(updateFromLast)); //////////// FALTA ORDERNAR POR SORT
-			/*if(sort.equals("last")){
+			//stmt = conn.prepareStatement(buildGetEventsQuery(updateFromLast)); //////////// FALTA ORDERNAR POR SORT
+			if(sort.equals("last")){
 				stmt = conn.prepareStatement(buildGetEventsQuery(updateFromLast));
 			}else if(sort.equals("popular")){
 				stmt = conn.prepareStatement(buildGetEventsQueryPopular(updateFromLast));
-			}*/
+			}
 			if (updateFromLast) {
 				stmt.setTimestamp(1, new Timestamp(after));
 			} else {
@@ -242,6 +242,7 @@ public class EventResource {
 			stmt.setString(7, event.getState());
 			stmt.setBoolean(8, event.isPublicEvent());
 			stmt.setDate(9, event.getEventDate());
+			stmt.setInt(10, event.getPopularity());
 			stmt.executeUpdate();
 			ResultSet rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
@@ -267,7 +268,7 @@ public class EventResource {
 	}
 
 	private String buildInsertEvent() {
-		return "INSERT INTO events(title, coord_x, coord_y, category, description, owner, state, public, event_date) value (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		return "INSERT INTO events(title, coord_x, coord_y, category, description, owner, state, public, event_date, popularity) value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	}
 
 	@GET //// SI SE BUSCA UN TTITULO CON ESPACIOS DEVUELTE TODOS LOS QUE TENGAN ESPACIOS :S:S:S

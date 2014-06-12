@@ -86,15 +86,15 @@ function createEvent2(){
 
 	var event = new Object();
 	event.title = $('#event_title').val();
-	event.description = $('#event_description').val();
-	event.owner = $.cookie('username');
 	event.coordX = $('#event_coordX').val();
 	event.coordY = $('#event_coordY').val();
+	event.category = document.getElementById("select_category").value;
+	event.description = $('#event_description').val();
+	event.owner = $.cookie('username');
 	//event.coordX = '2222';
 	//event.coordY = '3333';
 	//var position=document.getElementById('category').options.selectedIndex; 
 	//event.category = "deportes"; //document.getElementById('category').options[position].text;
-	event.category = document.getElementById("select_category").value;
 	event.state = "Abierto";
 	event.publicEvent = true;
 	event.date = $('#event_date').val();

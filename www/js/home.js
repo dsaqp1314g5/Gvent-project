@@ -22,6 +22,7 @@ $(document).ready(function(){
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;
 		loadEvents(rootAPI.getLink('events').href);
+		loadPopularEvents(rootAPI.getLink('events').href + '?sort=popular');
 	});
 	loadLinks($.cookie('link-user'));
 	//var followedEventsURL=$.cookie('link-user')+'/events/followed';
@@ -73,6 +74,31 @@ function loadEvents(url){
 		});
 	});
 }
+
+function loadPopularEvents(url){
+	var events = getEvents(url, function (eventCollection){
+		$.each(eventCollection.events, function(index,item){
+			var event = new Event(item);
+			if(event.state == "Abierto"){
+				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:green;color:white;height:3px;"></div>');
+			}else{
+				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:red;color:white;height:3px;"></div>');
+			}
+			var commentsURL = event.getLink("comments").href;			
+			console.log(commentsURL);
+			 link.click(function(e){ 
+				 e.preventDefault();
+				 $.cookie('link-event',  event.getLink("self").href);
+				 window.location.replace("/event.html");
+				 
+			 });
+			var div = $('<div></div>')
+			div.append(link);
+			$('#result_popular_events').append(div);
+		});
+	});
+}
+
 
 function loadComments(url, title, eventURL){
 	var comments = getComments(url, function(commentCollection){
