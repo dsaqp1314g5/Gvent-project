@@ -31,12 +31,6 @@ $("#save_btn").click(function(e) {
 				var user = new Object();
 				user.username = $.cookie('username');
 				user.name = $('#name').val();
-				if($('#password').val()==null || $('#password').val()=='' ){
-					alert(cookie('pass_editar'));
-					user.userpass = $.cookie('pass_editar');
-				}else{
-					user.userpass = $('#password').val();
-				}
 				user.email = $('#email').val();
 				console.log(user.name);
 				console.log($.cookie('username'));
