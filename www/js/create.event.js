@@ -9,6 +9,8 @@ $(document).ready(function(){
 });
 
 $('#create_btn').click(function(e){
+	e.preventDefault();
+	console.log("borra este log");
 	createEvent2();
 });
 
@@ -83,7 +85,6 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 
 function createEvent2(){
-
 	var event = new Object();
 	event.title = $('#event_title').val();
 	event.coordX = $('#event_coordX').val();
@@ -104,9 +105,9 @@ function createEvent2(){
 	console.log(eventsURL.type);
 	console.log(JSON.stringify(event));
 
-	alert('stop');
+	//alert('stop');
 	createEvent(eventsURL.href, eventsURL.type, JSON.stringify(event), function(event){
 		console.log("exitooooooooooooooooooooooooooooo");
-		window.location.replace("/home.html");
+		window.location.replace("home.html");
 	});
 }

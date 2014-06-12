@@ -10,6 +10,7 @@ var PASSWORD = "";
 var eventsURL;
 
 $("#search_btn").click(function(e){
+	e.preventDefault();
 	console.log("search");
 	console.log("link " + eventsURL);
 	console.log("title: " + $('#search_event').val());
@@ -28,31 +29,26 @@ $(document).ready(function(){
 	console.log($.cookie('username'));
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;
-		loadEvents(rootAPI.getLink('events').href);
 	});
 	;
-	var followedEventsURL=$.cookie('link-user')+'/events/followed';
-	var myEventsURL=$.cookie('link-user')+'/events';
-	var myFriendsURL=$.cookie('link-user')+'/friends';
-	var myURL =$.cookie('link-user');
-	loadMyFriends(myFriendsURL);
-	loadMyProfile(myURL);
 });
-
-function loadEvents(url){
-	var events = getEvents(url, function (eventCollection){
-		$.each(eventCollection.events, function(index,item){
-			var event = new Event(item);
-			$('<tr><td>'+event.id +'</td><td>' + event.title +'</td><td>' + event.category + '</td><td>' + event.popularity + '</td><td>' + event.state +'</td>').appendTo($('#result_events'));
-		});
-	});
-}
-
 function loadEventsBy(url, title){
-	var events = getEvents(url+'/search?title='+title, function (eventCollection){
+	$('#result_events').text('');
+	var events = getEvents(url+'/search?title='+title, function(eventCollection){
 		$.each(eventCollection.events, function(index,item){
 			var event = new Event(item);
-			$('<tr><td>'+event.id +'</td><td>' + event.title +'</td><td>' + event.category + '</td><td>' + event.popularity + '</td><td>' + event.state +'</td>').appendTo($('#result_events'));
+			console.log(event);
+			alert(event.popularity);
+			var link = $('<div class="well well-sm"><div class="media" ><div class="media-body"><h4 class="media-heading">'+event.title+'</h4><h6>Followers: '+event.popularity+'</h6><h6>Estado: '+event.state+'</h6><p><a class="btn btn-xs btn-default"><span class="glyphicon glyphicon-map-marker"></span>Ver evento</a></p></div></div></div>');
+			link.click(function(e){
+				 $.cookie('link-event',  event.getLink("self").href);
+				 window.location.replace("/event.html");
+			});
+			
+			var div = $('<div></div>');
+			div.append(link);
+			$('#result_events').append(div);
 		});
+		
 	});
 }

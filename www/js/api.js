@@ -160,6 +160,7 @@ function getEvent(url, success){
 }
 
 function updateEvent(url, type, event, success){
+	console.log("updateEvent");
 	$.ajax({
 		url : url,
 		type : 'PUT',
@@ -169,6 +170,7 @@ function updateEvent(url, type, event, success){
 	})
 	.done(function (data, status, jqxhr) {
 		var event = $.parseJSON(jqxhr.responseText);
+		console.log("SUCCESS ON PUT!!");
 		success(event);
 		//console.log("SUCCESS ON PUT!!");
 	})

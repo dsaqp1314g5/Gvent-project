@@ -14,6 +14,8 @@ var lat;
 var lng;
 
 $('#save_settings').click(function(e){
+	e.preventDefault();
+	console.log("ESTOY AQUI");
 	var event = new Object();
 	event.title = $('#event_title').val();
 	event.description = $('#event_description').val();
@@ -27,7 +29,7 @@ $('#save_settings').click(function(e){
 	//console.log("llego");
 	updateEvent(eventURL, type, JSON.stringify(event), function(event){
 		console.log("exitooooooooooooooooooooooooooooo");
-		window.location.replace("/event.html");
+		window.location.replace("event.html");
 	});
 });
 
@@ -58,6 +60,7 @@ function loadEvent(url){
 		$('#event_coordX').val(event.coordX);
 		$('#event_coordY').val(event.coordY);
 		$('#event_date').val(event.eventDate);
+		document.getElementById("select_category").value=event.category;
 		lat = event.coordX;
 		lng = event.coordY;
 		initialize();

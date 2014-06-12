@@ -319,6 +319,7 @@ public class EventResource {
 				event.setOwner(rs.getString("owner"));
 				event.setState(rs.getString("state"));
 				event.setPublicEvent(rs.getBoolean(9));
+				event.setPopularity(rs.getInt("popularity"));
 				event.setCreationDate(rs.getTimestamp("creation_date")
 						.getTime());
 				event.setEventDate(rs.getDate(11));
