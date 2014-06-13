@@ -22,6 +22,7 @@ $('#save_settings').click(function(e){
 	event.coordX = $('#event_coordX').val();//'-34.29806835099083';
 	event.coordY = $('#event_coordY').val();//'147.94464111328125';
 	event.eventDate = $('#event_date').val();
+	event.state =  document.getElementById("select_state").value;
 	//console.log(document.getElementById("select_category").value);
 	event.category = document.getElementById("select_category").value;
 	//alert("X " + event.coordX + " Y " +event.coordY );
@@ -61,6 +62,7 @@ function loadEvent(url){
 		$('#event_coordY').val(event.coordY);
 		$('#event_date').val(event.eventDate);
 		document.getElementById("select_category").value=event.category;
+		document.getElementById("select_state").value=event.state;
 		lat = event.coordX;
 		lng = event.coordY;
 		initialize();

@@ -188,6 +188,7 @@ public class EventResource {
 			event.setCreationDate(rs.getTimestamp("creation_date")
 					.getTime());
 			event.setEventDate(rs.getDate(11));
+			event.setPopularity(rs.getInt("popularity"));
 			} else {
 				throw new NotFoundException("There's no event with id="
 						+ eventId);
@@ -278,7 +279,6 @@ public class EventResource {
 			@QueryParam("title") String title, @QueryParam("length") int length) {
 
 		EventCollection events = new EventCollection();
-
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -295,12 +295,12 @@ public class EventResource {
 			if(category != null){
 				stmt.setString(2, category);
 			}else{
-				stmt.setString(2, "");
+				stmt.setString(2, "%''%");
 			}
 			if(title != null){
 				stmt.setString(1, "%" + title + "%");
 			}else{
-				stmt.setString(1, "%%");
+				stmt.setString(1, "%''%");
 			}
 			length = (length <= 0) ? 10 : length;
 

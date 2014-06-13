@@ -198,6 +198,7 @@ public class UserResource {
 		}
 
 		PreparedStatement stmt = null;
+		PreparedStatement stmt2 = null;
 		try {
 			String sql = buildInsertUser();
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -215,6 +216,12 @@ public class UserResource {
 			} else {
 				// Something has failed...
 			}
+			
+
+			stmt2 = conn.prepareStatement(buildInsertRole(), Statement.RETURN_GENERATED_KEYS);
+			stmt2.setString(1, user.getUsername());
+			stmt2.setString(2, "registered");
+			stmt2.executeUpdate();
 		} catch (SQLException e) {
 			throw new ServerErrorException(e.getMessage(),
 					Response.Status.INTERNAL_SERVER_ERROR);
@@ -222,6 +229,9 @@ public class UserResource {
 			try {
 				if (stmt != null)
 					stmt.close();
+				if (stmt2 != null){
+					stmt2.close();
+				}
 				conn.close();
 			} catch (SQLException e) {
 			}
@@ -231,7 +241,11 @@ public class UserResource {
 	}
 
 	private String buildInsertUser() {
-		return "INSERT INTO users(username, userpass, name, email) value (?, ?, ?, ?)";
+		return "INSERT INTO users(username, userpass, name, email) values (?, ?, ?, ?)";
+	}
+	
+	private String buildInsertRole(){
+		return "INSERT INTO user_roles(username, rolename) values(?,?)";
 	}
 	
 	@GET
