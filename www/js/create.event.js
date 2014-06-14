@@ -1,5 +1,6 @@
 var map;
 var eventsURL;
+var markers =[];
 $(document).ready(function(){
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
 	initialize();
@@ -51,14 +52,15 @@ function initialize() {
 	    var lat = event.latLng.lat();
 	    var lng = event.latLng.lng();
 	    var myLatlng = new google.maps.LatLng(lat,lng);
+	    deleteMarkers();
+	    addMarker(myLatlng);
 	    
-	    
-	    var marker = new google.maps.Marker({
+	  /*  var marker = new google.maps.Marker({
 	        position: myLatlng,
 	        map: map,
 	        title: 'Nuevo evento'
 	    });
-
+*/
 	    $('#event_coordX').val(lat);
 	    $('#event_coordY').val(lng);
 	});
@@ -80,6 +82,34 @@ function handleNoGeolocation(errorFlag) {
   var infowindow = new google.maps.InfoWindow(options);
   map.setCenter(options.position);
 }
+
+function addMarker(myLatlng) {
+	  markers.push(new google.maps.Marker({
+	    position: myLatlng,
+	    map: map,
+	    draggable: false,
+        title: 'Nuevo evento'
+	  }));
+	}
+
+	function setAllMap(map) {
+		  for (var i = 0; i < markers.length; i++) {
+		    markers[i].setMap(map);
+		  }
+		}
+
+	function clearMarkers() {
+		  setAllMap(null);
+		}
+
+	function showMarkers() {
+		  setAllMap(map);
+		}
+
+	function deleteMarkers() {
+		  clearMarkers();
+		  markers = [];
+		}
 
 google.maps.event.addDomListener(window, 'load', initialize);
 

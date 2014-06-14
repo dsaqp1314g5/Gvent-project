@@ -8,7 +8,8 @@ var PASSWORD = "";
  */
 
 var eventsURL;
-
+var markers = [];
+var iterator = 0;
 $("#search_btn").click(function(e){
 	e.preventDefault();
 	console.log("search");
@@ -46,9 +47,11 @@ function loadEventsBy(url, title, category){
 	}
 	console.log(urlSearch);
 	var events = getEvents(urlSearch, function(eventCollection){
+		var neighborhoods = new Array();
 		$.each(eventCollection.events, function(index,item){
 			var event = new Event(item);
 			console.log(event);
+			neighborhoods.push(new google.maps.LatLng(event.coordX, event.coordY));
 			var link = $('<div class="well well-sm"><div class="media" ><div class="media-body"><h4 class="media-heading">'+event.title+'</h4><h6>Followers: '+event.popularity+'</h6><h6>Estado: '+event.state+'</h6><p><a class="btn btn-xs btn-default"><span class="glyphicon glyphicon-map-marker"></span>Ver evento</a></p></div></div></div>');
 			link.click(function(e){
 				 $.cookie('link-event',  event.getLink("self").href);
@@ -59,6 +62,99 @@ function loadEventsBy(url, title, category){
 			div.append(link);
 			$('#result_events').append(div);
 		});
-		
+		//deleteMarkers();
+		initialize(neighborhoods);
 	});
+	
+
 }
+
+function initialize(neighborhoods) {
+  var mapOptions = {
+    zoom: 9
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+  // Try HTML5 geolocation
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var pos = new google.maps.LatLng(position.coords.latitude,
+                                       position.coords.longitude);
+
+      var infowindow = new google.maps.InfoWindow({
+        map: map,
+        position: pos
+      });
+
+      map.setCenter(pos);
+    }, function() {
+      handleNoGeolocation(true);
+    });
+  } else {
+    // Browser doesn't support Geolocation
+    handleNoGeolocation(false);
+  }
+  
+  drop(neighborhoods);
+}
+
+function handleNoGeolocation(errorFlag) {
+  if (errorFlag) {
+    var content = 'Error: The Geolocation service failed.';
+  } else {
+    var content = 'Error: Your browser doesn\'t support geolocation.';
+  }
+
+  var options = {
+    map: map,
+    position: new google.maps.LatLng(60, 105),
+    content: content
+  };
+
+  var infowindow = new google.maps.InfoWindow(options);
+  map.setCenter(options.position);
+}
+
+function drop(neighborhoods) {
+	
+  for (var i = 0; i < neighborhoods.length; i++) {
+	console.log("dropeando");
+    setTimeout(function() {
+      addMarker(neighborhoods);
+    }, i * 200);
+  }
+}
+
+function addMarker(neighborhoods) {
+  markers.push(new google.maps.Marker({
+    position: neighborhoods[iterator],
+    map: map,
+    draggable: false,
+    animation: google.maps.Animation.DROP
+  }));
+  iterator++;
+}
+
+function setAllMap(map) {
+	  for (var i = 0; i < markers.length; i++) {
+	    markers[i].setMap(map);
+	  }
+	}
+
+function clearMarkers() {
+	  setAllMap(null);
+	}
+
+function showMarkers() {
+	  setAllMap(map);
+	}
+
+function deleteMarkers() {
+	  clearMarkers();
+	  markers = [];
+	}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+		    
+		   
