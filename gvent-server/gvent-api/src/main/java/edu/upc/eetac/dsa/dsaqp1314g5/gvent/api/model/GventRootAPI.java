@@ -17,7 +17,7 @@ public class GventRootAPI {
 	@InjectLinks({
 		@InjectLink(resource = GventRootAPIResource.class, style = Style.ABSOLUTE, rel = "self bookmark home", title = "Gvent Root API", method = "getRootAPI"),
 		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "events", title = "Latest events", type = MediaType.GVENT_API_EVENT_COLLECTION),
-		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "create-event", title = "Latest events", type = MediaType.GVENT_API_EVENT),  
+		@InjectLink(resource = EventResource.class, style = Style.ABSOLUTE, rel = "create-event", title = "new event", type = MediaType.GVENT_API_EVENT),  
 		@InjectLink(resource = UserResource.class, style = Style.ABSOLUTE, rel = "create-user", title = "Create user", type = MediaType.GVENT_API_USER)  })
 	private List<Link> links;
 

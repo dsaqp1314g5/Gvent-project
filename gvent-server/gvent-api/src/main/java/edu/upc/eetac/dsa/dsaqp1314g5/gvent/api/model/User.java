@@ -18,7 +18,11 @@ import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.UserResource;
 public class User {
 	@InjectLinks({
 		@InjectLink(resource = UserResource.class, style = Style.ABSOLUTE, rel = "users", title = "Latest users", type = MediaType.GVENT_API_USER_COLLECTION),
-		@InjectLink(resource = UserResource.class, style = Style.ABSOLUTE, rel = "self edit", title = "user", type = MediaType.GVENT_API_USER, method = "getUser", bindings = @Binding(name = "username", value = "${instance.username}")) })
+		@InjectLink(resource = UserResource.class, style = Style.ABSOLUTE, rel = "self edit", title = "user", type = MediaType.GVENT_API_USER, method = "getUser", bindings = @Binding(name = "username", value = "${instance.username}")),
+		@InjectLink(resource = UserResource.class, style = Style.ABSOLUTE, rel = "events", title = "events", type = MediaType.GVENT_API_EVENT_COLLECTION, method = "getEvents", bindings = @Binding(name = "username", value = "${instance.username}")),
+		@InjectLink(resource = UserResource.class, style = Style.ABSOLUTE, rel = "followed", title = "events-followed", type = MediaType.GVENT_API_EVENT_COLLECTION, method = "getEventsFollowed", bindings = @Binding(name = "username", value = "${instance.username}")),
+		@InjectLink(resource = UserResource.class, style = Style.ABSOLUTE, rel = "comments", title = "comments", type = MediaType.GVENT_API_COMMENT_COLLECTION, method = "getComments", bindings = @Binding(name = "username", value = "${instance.username}")),
+		@InjectLink(resource = UserResource.class, style = Style.ABSOLUTE, rel = "friends", title = "my-friends", type = MediaType.GVENT_API_USER_COLLECTION, method = "getFriends", bindings = @Binding(name = "username", value = "${instance.username}"))})
 	private List<Link> links;
 	private String username;
 	private String userpass; 

@@ -113,7 +113,7 @@
 				<div class="collapse navbar-collapse" id="navbar-collapse2">
 					<ul class="nav navbar-nav navbar-right">
 						<li class="active" id="user_loged"></li>
-						<li><a href="index.html" role="button">Logout</a></li>
+						<li><a href="index.html" role="button" id="logout_btn">Logout</a></li>
 						<li><a href="#aboutModal" role="button" data-toggle="modal">About</a></li>
 						<li><a href="#" id="btnToggle"><i
 								class="glyphicon glyphicon-th-large"></i></a></li>
@@ -134,17 +134,18 @@
 					<div class="col-sm-2" id="event_owner">
 						<a href="user_profile.html" class="pull-right"><img
 							title="profile image" class="img-circle img-responsive"
-							src="http://fotouser.miarroba.st/5e44274e/300/mcbeth.jpg"></a>
+							src="./img/profile.png"></a><br>
 					</div>
-					<hr>
-					<p align="justify" id="event_description"></p>
 
 					<!-- Container con geolocalización y mapa -->
 
+
+				</div>
+
+				<div class="col-lg-12">
 					<div class="panel-body">
 						<div id="map-canvas" class="con-md-12"></div>
 					</div>
-
 				</div>
 				<div id="event_settings" hidden>
 					<button class="btn btn-success pull-right" type="button"
@@ -153,6 +154,10 @@
 				<div id="event_follow" hidden>
 					<button class="btn btn-success pull-right" type="button"
 						id="follow_btn">Unirse</button>
+				</div>
+				<div id="event_unfollow" hidden>
+					<button class="btn btn-success pull-right" type="button"
+						id="unfollow_btn">Abandonar</button>
 				</div>
 			</div>
 		</div>
@@ -163,73 +168,38 @@
 
 
 		<div class="row">
-
-			<div class="col-md-4 col-sm-6">
+			<div class="col-md-4 col-sm-4">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<a href="#" class="pull-right">View all</a>
-						<h4>Galeria del Evento</h4>
-					</div>
-					<div class="panel-body">
-
-						<!-- Load images from HDD-->
-
-						<input type="file">
-
-
-						<hr>
-						<!-- The container for the list of example images -->
-						<div id="links" class="links"></div>
-						<!-- The Gallery as lightbox dialog, should be a child element of the document body -->
-						<div id="blueimp-gallery" class="blueimp-gallery">
-							<div class="slides"></div>
-							<h3 class="title"></h3>
-							<a class="prev">‹</a> <a class="next">›</a> <a class="close">×</a>
-							<a class="play-pause"></a>
-							<ol class="indicator"></ol>
-						</div>
-					</div>
-				</div>
-			</div>
-
-
-
-			<div class="col-md-4 col-sm-6">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<form class="form-horizontal" role="form">
-							<h4>Postea un mensaje</h4>
-							
-					</div>
-							<div class="form-group" style="padding: 14px;">
-								<textarea class="form-control"
-									placeholder="Escribe tu mensaje del evento" id="comment_text"></textarea>
-							</div>
-
-							<button class="btn btn-success pull-right" type="button"
-								id="post_comment">Post</button>
-							<ul class="list-inline">
-								<li><a href="#"></a></li>
-								</a>
-								</li>
-							</ul>
-
-					</form>
-
-					<div class="panel-body" id="result_comments"></div>
-				</div>
-			</div>
-
-
-
-			<div class="col-md-4 col-sm-6">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<a href="#" class="pull-right">View all</a>
 						<h4>Asistentes</h4>
 					</div>
 					<div class="panel-body" id="result_followers"></div>
 
+				</div>
+			</div>
+			
+			<div class="col-md-8 col-sm-8">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<form class="form-horizontal" role="form">
+							<h4>Comentarios</h4>
+					</div>
+					<div class="form-group" style="padding: 14px;">
+						<textarea class="form-control"
+							placeholder="Escribe tu mensaje del evento" id="comment_text"></textarea>
+					</div>
+
+					<button class="btn btn-success pull-right" type="button"
+						id="post_comment">Post</button>
+					<ul class="list-inline">
+						<li><a href="#"></a></li>
+						</a>
+						</li>
+					</ul>
+
+					</form>
+
+					<div class="panel-body" id="result_comments"></div>
 				</div>
 			</div>
 		</div>

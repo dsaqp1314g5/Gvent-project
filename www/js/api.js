@@ -1,5 +1,9 @@
 var GVENT_API_HOME="http://localhost:8080/gvent-api";
 
+function deleteCookie( name ) {
+	  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	}
+
 function Link(rel, linkheader){
 	this.rel = rel;
 	this.href = decodeURIComponent(linkheader.find(rel).template().template);
@@ -64,8 +68,6 @@ function Event(event){
 	this.creationDate = event.creationDate;
 	this.eventDate = event.eventDate;
 	this.popularity = event.popularity;
-	this.puntuation = event.puntuation;
-	this.votes = event.votes;
 	this.links = buildLinks(event.links);
 	
 	var instance = this;
@@ -135,7 +137,7 @@ function followEvent(url, type, user, success){
 	})
 	.done(function (data, status, jqxhr) {
 		//var user = $.parseJSON(jqxhr.responseText);
-		success(user);
+		success();
 	})
     .fail(function (jqXHR, textStatus) {
 		console.log(textStatus);
@@ -158,6 +160,7 @@ function getEvent(url, success){
 }
 
 function updateEvent(url, type, event, success){
+	console.log("updateEvent");
 	$.ajax({
 		url : url,
 		type : 'PUT',
@@ -167,6 +170,7 @@ function updateEvent(url, type, event, success){
 	})
 	.done(function (data, status, jqxhr) {
 		var event = $.parseJSON(jqxhr.responseText);
+		console.log("SUCCESS ON PUT!!");
 		success(event);
 		//console.log("SUCCESS ON PUT!!");
 	})
@@ -190,6 +194,22 @@ function deleteEvent(url, success){
 	});
 }
 
+function unfollowEvent(url, type, user, success){
+	$.ajax({
+		url : url,
+		type : 'DELETE',
+		crossDomain : true,
+		contentType: type,
+		data: user
+	})
+	.done(function (data, status, jqxhr) {
+		//var sting = $.parseJSON(jqxhr.responseText);
+		success();
+	})
+    .fail(function (jqXHR, textStatus) {
+		console.log(textStatus);
+	});
+}
 
 //USERS
 
@@ -257,6 +277,22 @@ function createUser(url, type, user, success){
 	});
 }
 
+function addFriend(url, type, user, success){
+	$.ajax({
+		url : url,
+		type : 'POST',
+		crossDomain : true,
+		contentType: type, 
+		data: user
+	})
+	.done(function (data, status, jqxhr) {
+		success(user);
+	})
+    .fail(function (jqXHR, textStatus) {
+		console.log(textStatus);
+	});
+}
+
 function getUser(url, success){
 	$.ajax({
 		url : url,
@@ -306,6 +342,23 @@ function deleteUser(url, success){
 		console.log(textStatus);
 	});
 }
+
+function deleteFriend(url, type, user, success){
+	$.ajax({
+		url : url,
+		type : 'DELETE',
+		crossDomain : true,
+		contentType: type, 
+		data: user
+	})
+	.done(function (data, status, jqxhr) {
+		success(user);
+	})
+    .fail(function (jqXHR, textStatus) {
+		console.log(textStatus);
+	});
+}
+
 
 
 //// COMMENTS
