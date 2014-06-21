@@ -14,7 +14,7 @@ $(document).ready(function(){
 		if($.cookie('username')!=undefined){
 			window.location.replace("/home.html");
 		}else{
-			console.log("cookie : " +$.cookie('username'));
+			//console.log("cookie : " +$.cookie('username'));
 			loadRootAPI(function(rootAPI){
 			loadLastEvents(rootAPI.getLink('events').href + '?sort=last');
 			loadPopularEvents(rootAPI.getLink('events').href +'?sort=popular');
