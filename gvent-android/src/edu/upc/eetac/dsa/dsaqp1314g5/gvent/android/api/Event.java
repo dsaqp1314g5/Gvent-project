@@ -8,7 +8,7 @@ import java.util.Map;
 public class Event {
 	
 	private Map<String, Link> links = new HashMap<String, Link>();
-	private int id;
+	private String id;
 	private String title;
 	private String coordX;
 	private String coordY;
@@ -27,10 +27,10 @@ public class Event {
 	public void setLinks(Map<String, Link> links) {
 		this.links = links;
 	}
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getTitle() {
