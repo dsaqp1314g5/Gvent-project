@@ -38,7 +38,7 @@ $('#add_friend').click(function(e){
 	});
 });
 
-$('#delete_user').click(function(e){
+$('#delete_user_btn').click(function(e){
 	url = $.cookie('link-friend');
 	deleteUser(url, function(){
 		window.location.replace("/home.html");
