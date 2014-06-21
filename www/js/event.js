@@ -78,7 +78,7 @@ function loadEvent(url){
 		$('<h3>' + event.owner + '</h3><br><br><br><br>').appendTo($('#event_owner'));
 		$('<h1>' + event.title + '</h1>').appendTo($('#info_event'));
 		$('<h2>' + event.category + '</h2>').appendTo($('#info_event'));
-		$('<h3>' + event_date + '</h3>').appendTo($('#info_event'));
+		$('<h4>' + event_date + '</h4>').appendTo($('#info_event'));
 		$('<h6>' + event.description + '</h6>').appendTo($('#info_event'));
 		//console.log(event.getLink());
 		if(event.owner ==  $.cookie('username')){

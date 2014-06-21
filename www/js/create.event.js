@@ -122,22 +122,23 @@ function createEvent2(){
 	event.category = document.getElementById("select_category").value;
 	event.description = $('#event_description').val();
 	event.owner = $.cookie('username');
+	var date = new Date(event.eventDate);
 	//event.coordX = '2222';
 	//event.coordY = '3333';
 	//var position=document.getElementById('category').options.selectedIndex; 
 	//event.category = "deportes"; //document.getElementById('category').options[position].text;
 	event.state = "Abierto";
 	event.publicEvent = true;
-	event.date = $('#event_date').val();
+	event.date = "2012-12-11";//$('#event_date').val();
+	alert(date);
 	event.popularity = 0;
 	//console.log(eventsURL.type);
 	console.log(eventsURL.href);
 	console.log(eventsURL.type);
 	console.log(JSON.stringify(event));
 
-	//alert('stop');
+	alert('stop');
 	createEvent(eventsURL.href, eventsURL.type, JSON.stringify(event), function(event){
-		console.log("exitooooooooooooooooooooooooooooo");
 		window.location.replace("home.html");
 	});
 }
