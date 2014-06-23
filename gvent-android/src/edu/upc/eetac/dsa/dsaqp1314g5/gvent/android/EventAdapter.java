@@ -42,10 +42,10 @@ public class EventAdapter extends BaseAdapter {
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.list_row_event, null);
 			viewHolder = new ViewHolder();
-			viewHolder.tvSubject = (TextView) convertView
-					.findViewById(R.id.tvSubject);
-			viewHolder.tvUsername = (TextView) convertView
-					.findViewById(R.id.tvUsername);
+			viewHolder.tvtitle = (TextView) convertView
+					.findViewById(R.id.tvtitle);
+			viewHolder.tvcategory = (TextView) convertView
+					.findViewById(R.id.tvcategory);
 			viewHolder.tvDate = (TextView) convertView
 					.findViewById(R.id.tvDate);
 			convertView.setTag(viewHolder);
@@ -54,16 +54,17 @@ public class EventAdapter extends BaseAdapter {
 		}
 		String title = data.get(position).getTitle();
 		String category = data.get(position).getCategory();
-		String date = SimpleDateFormat.getInstance().format(
-				data.get(position).getEventDate());
-		viewHolder.tvSubject.setText(title);
-		viewHolder.tvUsername.setText(category);
-		viewHolder.tvDate.setText(date);
+//		String date = SimpleDateFormat.getInstance().format(
+//				data.get(position).getEventDate());
+		viewHolder.tvtitle.setText(title);
+		viewHolder.tvcategory.setText(category);
+//		viewHolder.tvDate.setText(date);
 		return convertView;
 	}
+	
 	private static class ViewHolder {
-		TextView tvSubject;
-		TextView tvUsername;
+		TextView tvtitle;
+		TextView tvcategory;
 		TextView tvDate;
 	}
 }

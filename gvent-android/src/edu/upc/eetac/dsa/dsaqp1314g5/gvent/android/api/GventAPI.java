@@ -33,7 +33,7 @@ public class GventAPI {
 		String serverAddress = config.getProperty("server.address");
 		String serverPort = config.getProperty("server.port");
 		url = new URL("http://" + serverAddress + ":" + serverPort
-				+ "gvent-api");
+				+ "/gvent-api");
  
 		Log.d("LINKS", url.toString());
 		getRootAPI();
@@ -86,9 +86,11 @@ public class GventAPI {
 	}
 	
 	public EventCollection getEvents() throws GventAndroidException{
+		Log.i("miquel","get0");
 		Log.d(TAG, "getEvents()");
 		EventCollection events = new EventCollection();
 		HttpURLConnection urlConnection = null;
+		Log.i("miquel","get1"+events);
 		try {
 			urlConnection = (HttpURLConnection) new URL(rootAPI.getLinks()
 					.get("events").getTarget()).openConnection();
@@ -99,6 +101,8 @@ public class GventAPI {
 			throw new GventAndroidException(
 					"Can't connect to Beeter API Web Service");
 		}
+		
+		
 		BufferedReader reader;
 		try {
 			reader = new BufferedReader(new InputStreamReader(
@@ -108,18 +112,18 @@ public class GventAPI {
 			while ((line = reader.readLine()) != null) {
 				sb.append(line);
 			}
+			
 			JSONObject jsonObject = new JSONObject(sb.toString());
 			JSONArray jsonLinks = jsonObject.getJSONArray("links");
 			parseLinks(jsonLinks, events.getLinks());
-			events.setNewestTimestamp(jsonObject.getLong("newestTimestamp"));
-			events.setOldestTimestamp(jsonObject.getLong("oldestTimestamp"));
-			JSONArray jsonEvents = jsonObject.getJSONArray("stings");
+			
+			JSONArray jsonEvents = jsonObject.getJSONArray("events");
 			for (int i = 0; i < jsonEvents.length(); i++) {
 				Event event = new Event();
 				JSONObject jsonEvent = jsonEvents.getJSONObject(i);
-				event.setTitle(jsonEvent.getString("Title"));
-				event.setCoordX(jsonEvent.getString("CoordX"));
-				event.setCoordY(jsonEvent.getString("CoordY"));
+				event.setTitle(jsonEvent.getString("title"));
+				event.setCoordX(jsonEvent.getString("coordX"));
+				event.setCoordY(jsonEvent.getString("coordY"));
 				jsonLinks = jsonEvent.getJSONArray("links");
 				parseLinks(jsonLinks, event.getLinks());
 				events.getEvents().add(event);
@@ -130,7 +134,7 @@ public class GventAPI {
 		} catch (JSONException e) {
 			throw new GventAndroidException("Error parsing Beeter Root API");
 		}
- 
+		Log.i("miquel","getfinal"+events);
 		return events;
 	}
 	private void parseLinks(JSONArray jsonLinks, Map<String, Link> map)
