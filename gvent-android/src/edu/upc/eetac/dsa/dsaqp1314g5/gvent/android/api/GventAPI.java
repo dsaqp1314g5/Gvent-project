@@ -94,11 +94,9 @@ public class GventAPI {
 	}
 	
 	public EventCollection getEvents() throws GventAndroidException{
-		Log.i("miquel","get0");
 		Log.d(TAG, "getEvents()");
 		EventCollection events = new EventCollection();
 		HttpURLConnection urlConnection = null;
-		Log.i("miquel","get1"+events);
 		try {
 			urlConnection = (HttpURLConnection) new URL(rootAPI.getLinks()
 					.get("events").getTarget()).openConnection();
@@ -149,9 +147,65 @@ public class GventAPI {
 		return events;
 	}
 	
+	public CommentCollection getComments(String idevent) throws GventAndroidException{
+		Log.i("miquel", "getcomments1");
+		CommentCollection comments = new CommentCollection();
+		HttpURLConnection urlConnection = null;
+		try {
+			Log.i("miquel", "getcommentstry");
+			urlConnection = (HttpURLConnection) new URL("http://192.168.1.2:8080/gvent-api/events/"+idevent+"/comments").openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setDoInput(true);
+			urlConnection.connect();
+			Log.i("miquel", "getcommentstryfinal");
+		} catch (IOException e) {
+			throw new GventAndroidException(
+					"Can't connect to Beeter API Web Service");
+		}
+		
+		BufferedReader reader;
+		try {
+			reader = new BufferedReader(new InputStreamReader(
+					urlConnection.getInputStream()));
+			StringBuilder sb = new StringBuilder();
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+			}
+			
+			JSONObject jsonObject = new JSONObject(sb.toString());
+			JSONArray jsonLinks = jsonObject.getJSONArray("links");
+			parseLinks(jsonLinks, comments.getLinks());
+
+			JSONArray jsonEvents = jsonObject.getJSONArray("comments");
+			Log.i("miquel", "getcommentsfor");
+			for (int i = 0; i < jsonEvents.length(); i++) {
+				Comment comment = new Comment();
+				JSONObject jsonEvent = jsonEvents.getJSONObject(i);
+				comment.setUsername(jsonEvent.getString("username"));
+				Log.i("miquel", "getcomments username:"+jsonEvent.getString("username"));
+				comment.setComment(jsonEvent.getString("comment"));
+				Log.i("miquel", "getcomments comment:"+jsonEvent.getString("comment"));
+				jsonLinks = jsonEvent.getJSONArray("links");
+				comment.setId(jsonEvent.getString("id"));
+				parseLinks(jsonLinks, comment.getLinks());
+//				event.setEventDate(jsonEvent.getString("date"));
+				Log.i("miquel", "getcomments antes add for :"+comment);
+				comments.getComments().add(comment);
+				Log.i("miquel", "get comments fin for");
+			}
+		} catch (IOException e) {
+			throw new GventAndroidException(
+					"Can't get response from Beeter API Web Service");
+		} catch (JSONException e) {
+			throw new GventAndroidException("Error parsing Beeter Root API");
+		}
+		Log.i("miquel", "getcommentsresult"+comments);
+		return comments;
+	}
+	
 	public Event getEvent(String urlEvent) throws GventAndroidException {
 		Event event = new Event();
-		Log.i("miquel","getevent1"+event);
 		HttpURLConnection urlConnection = null;
 		try {
 			URL url = new URL(urlEvent);

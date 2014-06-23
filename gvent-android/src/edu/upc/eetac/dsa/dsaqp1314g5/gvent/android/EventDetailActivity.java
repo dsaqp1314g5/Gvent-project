@@ -5,20 +5,38 @@ import edu.upc.eetac.dsa.dsaqp1314g5.gvent.android.api.GventAPI;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.android.api.GventAndroidException;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.database.CursorJoiner.Result;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 public class EventDetailActivity extends Activity{
 	private final static String TAG = EventDetailActivity.class.getName();
-	 
+	private Event event = new Event();
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.event_actions, menu);
 		return true;
 	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+        case R.id.MnuOpc1:
+        	Intent intent = new Intent(this, CommentsActivity.class);
+        	intent.putExtra("id",event.getId());
+    		startActivity(intent);
+    		return true;
+     
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
+     
+    }
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
 				super.onCreate(savedInstanceState);
@@ -28,7 +46,7 @@ public class EventDetailActivity extends Activity{
 			}
 		
 		
-		private void loadSting(Event event) {
+		private void loadEvent(Event event) {
 			TextView tvDetailtitle = (TextView) findViewById(R.id.tvDetailtitle);
 			TextView tvDetailcategory = (TextView) findViewById(R.id.tvDetailcategory);
 			TextView tvDetaildescription = (TextView) findViewById(R.id.tvDetaildescription);
@@ -63,7 +81,8 @@ public class EventDetailActivity extends Activity{
 		 
 			@Override
 			protected void onPostExecute(Event result) {
-				loadSting(result);
+				loadEvent(result);
+				event = result;
 				if (pd != null) {
 					pd.dismiss();
 				}
