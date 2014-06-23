@@ -35,6 +35,7 @@ $(document).ready(function(){
 	;
 });
 function loadEventsBy(url, title, category){
+	deleteMarkers();
 	$('#result_events').text('');
 	if(title =="" && category ==""){
 		var urlSearch=url+'/search?title='+title+'&category='+category;
@@ -62,7 +63,6 @@ function loadEventsBy(url, title, category){
 			div.append(link);
 			$('#result_events').append(div);
 		});
-		//deleteMarkers();
 		initialize(neighborhoods);
 	});
 	
@@ -81,6 +81,9 @@ function initialize(neighborhoods) {
     navigator.geolocation.getCurrentPosition(function(position) {
       var pos = new google.maps.LatLng(position.coords.latitude,
                                        position.coords.longitude);
+      
+
+
 
       var infowindow = new google.maps.InfoWindow({
         map: map,
@@ -106,6 +109,7 @@ function handleNoGeolocation(errorFlag) {
     var content = 'Error: Your browser doesn\'t support geolocation.';
   }
 
+  
   var options = {
     map: map,
     position: new google.maps.LatLng(60, 105),
@@ -127,6 +131,7 @@ function drop(neighborhoods) {
 }
 
 function addMarker(neighborhoods) {
+	
   markers.push(new google.maps.Marker({
     position: neighborhoods[iterator],
     map: map,

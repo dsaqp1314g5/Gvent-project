@@ -34,6 +34,12 @@ $('#logout_btn').click(function(e){
 	deleteCookie('username');
 });
 
+$('#delete_event_btn').click(function(e){
+	deleteUser(eventURL, function(){
+		window.location.replace("/home.html");
+	});
+});
+
 
 $(document).ready(function(){
 	eventURL=$.cookie('link-event');
@@ -45,7 +51,7 @@ $(document).ready(function(){
 		loadEvent(eventURL);
 	});
 	
-	
+
 	var followedEventsURL=$.cookie('link-user')+'/events/followed';
 	var myEventsURL=$.cookie('link-user')+'/events';
 	var myFriendsURL=$.cookie('link-user')+'/friends';
@@ -53,6 +59,7 @@ $(document).ready(function(){
 	//loadMyEvents(myEventsURL);
 	loadFollowers(eventURL+"/users");
 	//loadMyProfile(myURL);
+	
 });
 
 function loadEvent(url){
@@ -67,14 +74,19 @@ function loadEvent(url){
 		eventTitle=event.title;
 		console.log("la coord X es" + event.coordX);
 		console.log("la coord Y es" + event.coordY);
+		var owner = event.owner;
 		$('<h3>' + event.owner + '</h3><br><br><br><br>').appendTo($('#event_owner'));
 		$('<h1>' + event.title + '</h1>').appendTo($('#info_event'));
 		$('<h2>' + event.category + '</h2>').appendTo($('#info_event'));
-		$('<h3>' + event_date + '</h3>').appendTo($('#info_event'));
+		$('<h4>' + event_date + '</h4>').appendTo($('#info_event'));
 		$('<h6>' + event.description + '</h6>').appendTo($('#info_event'));
 		//console.log(event.getLink());
 		if(event.owner ==  $.cookie('username')){
 			$('#event_settings').show();
+		}
+
+		if($.cookie('rol')=='admin' || $.cookie('username').toUpperCase()==owner.toUpperCase()){
+			$('#delete_event').show();
 		}
 		lat = event.coordX;
 		lng = event.coordY;
@@ -149,7 +161,10 @@ function loadFollowers(url){
 				 window.location.replace("/friend_profile.html");
 			});
 			
-			if(user.username == $.cookie("username")){
+			console.log("el user que estoy comprobando es " +user.username);
+			console.log("el user logeado es : " +$.cookie("username"));
+			if(user.username.toUpperCase() == $.cookie("username").toUpperCase()){
+				console.log("match");
 				following = true;
 			}
 			

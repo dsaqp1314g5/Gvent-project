@@ -33,9 +33,15 @@ $('#add_friend').click(function(e){
 	var user = new Object();
 	user.username = usernameFriend;
 	url = $.cookie('link-user');
-	type = 'application/vnd.gvent.api.user+json';
 	addFriend(url, type, JSON.stringify(user), function(user){
 		window.location.reload();
+	});
+});
+
+$('#delete_user_btn').click(function(e){
+	url = $.cookie('link-friend');
+	deleteUser(url, function(){
+		window.location.replace("/home.html");
 	});
 });
 
@@ -45,7 +51,10 @@ $(document).ready(function(){
 		eventsURL = rootAPI.getLink('events').href;
 		//loadEvents(rootAPI.getLink('events').href);
 	});
-	;
+	console.log("el usuario es " + $.cookie('rol'));
+	if($.cookie('rol')=='admin'){
+		$('#delete_user').show();
+	}
 	var followedEventsURL=$.cookie('link-friend')+'/events/followed';
 	var myEventsURL=$.cookie('link-friend')+'/events';
 	var FriendsURL=$.cookie('link-friend')+'/friends';
