@@ -15,12 +15,15 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 public class GventMainActivity extends ListActivity {
 	private final static String TAG = GventMainActivity.class.toString();
@@ -30,24 +33,55 @@ public class GventMainActivity extends ListActivity {
 	//Autenticacion//
 	
 	/** Called when the activity is first created. */
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.gvent_actions, menu);
+		return true;
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gvent_layout);
+		SharedPreferences prefs = getSharedPreferences("gvent-profile",
+				Context.MODE_PRIVATE);
+		final String username = prefs.getString("username", null);
+		final String password = prefs.getString("password", null);
+	 
 		Authenticator.setDefault(new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication("Mikiodelg", "1234"
+				return new PasswordAuthentication(username, password
 						.toCharArray());
 			}
 		});
-	
+		Log.d(TAG, "authenticated with " + username + ":" + password);
+	 
 		eventList = new ArrayList<Event>();
 		adapter = new EventAdapter(this, eventList);
 		setListAdapter(adapter);
-		
 		(new FetchStingsTask()).execute();
 	}
 	
+//	
+//	@Override
+//	public void onCreate(Bundle savedInstanceState) {
+//		super.onCreate(savedInstanceState);
+//		setContentView(R.layout.gvent_layout);
+//		Authenticator.setDefault(new Authenticator() {
+//			protected PasswordAuthentication getPasswordAuthentication() {
+//				return new PasswordAuthentication("Mikiodelg", "1234"
+//						.toCharArray());
+//			}
+//		});
+//	
+//		eventList = new ArrayList<Event>();
+//		adapter = new EventAdapter(this, eventList);
+//		setListAdapter(adapter);
+//		
+//		(new FetchStingsTask()).execute();
+//	}
+//	
 	//END Autenticacion//
 	
 	@Override

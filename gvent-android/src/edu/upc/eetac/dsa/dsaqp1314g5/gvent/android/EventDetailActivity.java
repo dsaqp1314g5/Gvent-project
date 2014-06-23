@@ -7,11 +7,18 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.TextView;
 
 public class EventDetailActivity extends Activity{
 	private final static String TAG = EventDetailActivity.class.getName();
 	 
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.event_actions, menu);
+		return true;
+	}
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
 				super.onCreate(savedInstanceState);
