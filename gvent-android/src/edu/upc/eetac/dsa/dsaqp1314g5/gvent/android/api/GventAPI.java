@@ -4,14 +4,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Date;
 import java.util.Map;
 import java.util.Properties;
  
+
+
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
  
+
+
+
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
@@ -124,7 +132,10 @@ public class GventAPI {
 				event.setTitle(jsonEvent.getString("title"));
 				event.setCoordX(jsonEvent.getString("coordX"));
 				event.setCoordY(jsonEvent.getString("coordY"));
+				event.setId(jsonEvent.getString("id"));
 				jsonLinks = jsonEvent.getJSONArray("links");
+				parseLinks(jsonLinks, event.getLinks());
+//				event.setEventDate(jsonEvent.getString("date"));
 				parseLinks(jsonLinks, event.getLinks());
 				events.getEvents().add(event);
 			}
@@ -137,6 +148,50 @@ public class GventAPI {
 		Log.i("miquel","getfinal"+events);
 		return events;
 	}
+	
+	public Event getEvent(String urlEvent) throws GventAndroidException {
+		Event event = new Event();
+		Log.i("miquel","getevent1"+event);
+		HttpURLConnection urlConnection = null;
+		try {
+			URL url = new URL(urlEvent);
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setDoInput(true);
+			urlConnection.connect();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					urlConnection.getInputStream()));
+			StringBuilder sb = new StringBuilder();
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+			}
+			JSONObject jsonSting = new JSONObject(sb.toString());
+			event.setTitle(jsonSting.getString("title"));
+			event.setDescription(jsonSting.getString("description"));
+			event.setOwner(jsonSting.getString("owner"));
+			event.setCategory(jsonSting.getString("category"));
+			event.setState(jsonSting.getString("state"));
+			event.setCoordX(jsonSting.getString("coordX"));
+			event.setCoordY(jsonSting.getString("coordY"));
+			event.setId(jsonSting.getString("id"));
+			
+			JSONArray jsonLinks = jsonSting.getJSONArray("links");
+			parseLinks(jsonLinks, event.getLinks());
+		} catch (MalformedURLException e) {
+			Log.e(TAG, e.getMessage(), e);
+			throw new GventAndroidException("Bad sting url");
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage(), e);
+			throw new GventAndroidException("Exception when getting the sting");
+		} catch (JSONException e) {
+			Log.e(TAG, e.getMessage(), e);
+			throw new GventAndroidException("Exception parsing response");
+		}
+	 
+		return event;
+	}
+	
 	private void parseLinks(JSONArray jsonLinks, Map<String, Link> map)
 			throws GventAndroidException, JSONException {
 		for (int i = 0; i < jsonLinks.length(); i++) {

@@ -90,8 +90,8 @@ public class Event {
 	public Date getEventDate() {
 		return eventDate;
 	}
-	public void setEventDate(Date eventDate) {
-		this.eventDate = eventDate;
+	public void setEventDate(Date string) {
+		this.eventDate = string;
 	}
 	public int getPopularity() {
 		return popularity;

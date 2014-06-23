@@ -15,9 +15,12 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.app.ListActivity;
+import android.content.Intent;
 
 public class GventMainActivity extends ListActivity {
 	private final static String TAG = GventMainActivity.class.toString();
@@ -37,8 +40,6 @@ public class GventMainActivity extends ListActivity {
 						.toCharArray());
 			}
 		});
-		
-
 	
 		eventList = new ArrayList<Event>();
 		adapter = new EventAdapter(this, eventList);
@@ -48,6 +49,19 @@ public class GventMainActivity extends ListActivity {
 	}
 	
 	//END Autenticacion//
+	
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		Log.i("miquel","itemclick1");
+		Event event = eventList.get(position);
+		Log.i("miquel","itemclick2");
+		Log.d(TAG, event.getLinks().get("self").getTarget());
+		
+		Intent intent = new Intent(this, EventDetailActivity.class);
+		intent.putExtra("url", event.getLinks().get("self").getTarget());
+		Log.i("miquel","itemclick3,pre intent");
+		startActivity(intent);
+	}
 	
 	private void addEvents(EventCollection events){
 		eventList.addAll(events.getEvents());
@@ -75,8 +89,6 @@ public class GventMainActivity extends ListActivity {
 			}
 			Log.i("miquel","main0"+events);
 			
-//			HttpGet get  = new HttpGet("http://" + serverAddress + ":" + serverPort
-//					+ "/gvent-api/events");
 			return events;
 		}
 

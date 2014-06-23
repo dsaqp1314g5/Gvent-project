@@ -36,6 +36,7 @@ public class EventAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return Long.parseLong(((Event)getItem(position)).getId());
 	}
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder viewHolder = null;
