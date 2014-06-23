@@ -23,8 +23,8 @@ public class EventDetailActivity extends Activity{
 		protected void onCreate(Bundle savedInstanceState) {
 				super.onCreate(savedInstanceState);
 				setContentView(R.layout.event_detail_layout);
-				String urlSting = (String) getIntent().getExtras().get("url");
-				(new FetchStingTask()).execute(urlSting);
+				String urlEvent = (String) getIntent().getExtras().get("url");
+				(new FetchStingTask()).execute(urlEvent);
 			}
 		
 		
