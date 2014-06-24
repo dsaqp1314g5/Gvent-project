@@ -1,4 +1,4 @@
-var GVENT_API_HOME="http://localhost:8080/gvent-api";
+var GVENT_API_HOME="http://147.83.7.159:8080/gvent-api";
 
 function deleteCookie( name ) {
 	  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';

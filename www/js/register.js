@@ -1,4 +1,4 @@
-var API_URL = "http://localhost:8080/gvent-api/";
+var API_URL = "http://147.83.7.159:8080/gvent-api/";
 
 var userURL;
 

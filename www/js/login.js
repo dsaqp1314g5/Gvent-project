@@ -1,5 +1,5 @@
 
-var AUTH_URL= "http://localhost:8080/gvent-auth/ServletLogin";
+var AUTH_URL= "http://147.83.7.159:8080/gvent-auth/ServletLogin";
 
 $("#login_btn").click(function(e){
 	e.preventDefault();
@@ -29,7 +29,7 @@ function Login(username, password){
 
 		if (response=="successadmin")
 		{
-			url = "http://localhost:8080/gvent-api/" + 'users/'+ username;
+			url = "http://147.83.7.159:8080/gvent-api/" + 'users/'+ username;
 			getUser(url, function(user){
 				var userlog= new User(user);
 					$.cookie('username', username);
@@ -40,7 +40,7 @@ function Login(username, password){
 
 		}
 		else if (response=="successusuario"){
-		url = "http://localhost:8080/gvent-api/" + 'users/'+ username;
+		url = "http://147.83.7.159:8080/gvent-api/" + 'users/'+ username;
 		getUser(url, function(user){
 			var userlog= new User(user);
 				$.cookie('username', username);
