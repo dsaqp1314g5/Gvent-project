@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/MnuOpc1" android:title="Mis Eventos"
+          android:icon="@android:drawable/ic_menu_preferences"></item>
+    <item android:id="@+id/MnuOpc2" android:title="Mis Comentarios"
+          android:icon="@android:drawable/ic_menu_compass"></item>
+</menu>
