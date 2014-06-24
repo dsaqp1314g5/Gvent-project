@@ -1,12 +1,4 @@
 var API_URL= "http://localhost:8080/gvent-api/";
-var USERNAME = "";
-var PASSWORD = "";
-// Autenticacion
-/*
- * $.ajaxSetup({ headers: { 'Authorization': "Basic "+
- * btoa(USERNAME+':'+PASSWORD) } });
- */
-
 
 $('#logout_btn').click(function(e){
 	deleteCookie('username');
@@ -18,33 +10,20 @@ var myEventsURL;
 var myFriendsURL;
 $(document).ready(function(){
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
-	console.log($.cookie('username'));
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;
 		loadEvents(rootAPI.getLink('events').href);
 		loadPopularEvents(rootAPI.getLink('events').href + '?sort=popular');
 	});
 	loadLinks($.cookie('link-user'));
-	//var followedEventsURL=$.cookie('link-user')+'/events/followed';
-	//var myEventsURL=$.cookie('link-user')+'/events';
-	//var myFriendsURL=$.cookie('link-user')+'/friends';
-	console.log("events url " + myEventsURL);
-	console.log("followed url " + followedEventsURL);
-	console.log("friends url " + myFriendsURL);
-	//loadMyEvents(myEventsURL);
-	//loadFollowedEvents(followedEventsURL);
-	//loadMyFriends(myFriendsURL);
 });
 
 function loadLinks(url){
 	getUser(url, function(user){
 		var userlog= new User(user);
-		console.log("obteniendo links");
-		console.log(userlog.getLink('followed').href);
 		followedEventsURL = userlog.getLink('followed').href;
 		myEventsURL = userlog.getLink('events').href;
-		myFriendsURL = userlog.getLink('friends').href;
-		console.log("he acbado");
+		myFriendsURL = userlog.getLink('friends').href
 		loadMyEvents(myEventsURL);
 		loadFollowedEvents(followedEventsURL);
 		loadMyFriends(myFriendsURL);
@@ -60,8 +39,7 @@ function loadEvents(url){
 			}else{
 				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:red;color:white;height:3px;"></div>');
 			}
-			var commentsURL = event.getLink("comments").href;			
-			console.log(commentsURL);
+			var commentsURL = event.getLink("comments").href;		
 			 link.click(function(e){ 
 				 e.preventDefault();
 				 $.cookie('link-event',  event.getLink("self").href);
@@ -84,8 +62,7 @@ function loadPopularEvents(url){
 			}else{
 				var link = $('<a id="event-link" class="list-group-item">'+event.title+'</a><div style="background:red;color:white;height:3px;"></div>');
 			}
-			var commentsURL = event.getLink("comments").href;			
-			console.log(commentsURL);
+			var commentsURL = event.getLink("comments").href;	
 			 link.click(function(e){ 
 				 e.preventDefault();
 				 $.cookie('link-event',  event.getLink("self").href);
@@ -102,10 +79,6 @@ function loadPopularEvents(url){
 
 function loadComments(url, title, eventURL){
 	var comments = getComments(url, function(commentCollection){
-		console.log(commentCollection.comments.length);
-		/*if(commentCollection.comments.length != 0){
-			$('<br><a href="'+ eventURL + '"><h6>'+ title + '</h6><br>').appendTo($('#result_last_comments'));
-		}*/
 		$.each(commentCollection.comments, function(index, item){
 			var comment = new Comment(item);
 			var date = new Date(comment.lastModified);
@@ -174,7 +147,6 @@ function loadMyFriends(url){
 	var users = getUsers(url, function(userCollection){
 		$.each(userCollection.users, function(index,item){
 			var user = new User(item);
-			console.log(user.name);
 
 			var link = $('<div class="well well-sm"><div class="media" ><a class="thumbnail pull-left"> <img class="media-object" src="./img/profile.png" height="70" width="70"></a><div class="media-body"><h4 class="media-heading">'+user.username+'</h4><p><a class="btn btn-xs btn-default" id="profile"><span class="glyphicon glyphicon-user"></span>Ver perfil</a></p></div></div></div>');
 			link.click(function(e){

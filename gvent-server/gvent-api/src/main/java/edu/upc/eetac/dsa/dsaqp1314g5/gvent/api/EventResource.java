@@ -59,7 +59,7 @@ public class EventResource {
 		PreparedStatement stmt = null;
 		try {
 			boolean updateFromLast = after > 0;
-			//stmt = conn.prepareStatement(buildGetEventsQuery(updateFromLast)); //////////// FALTA ORDERNAR POR SORT
+		
 			if(sort.equals("last")){
 				stmt = conn.prepareStatement(buildGetEventsQuery(updateFromLast));
 			}else if(sort.equals("popular")){
@@ -72,7 +72,7 @@ public class EventResource {
 					stmt.setTimestamp(1, new Timestamp(before));
 				else
 					stmt.setTimestamp(1, null);
-				length = (length <= 0) ? 20 : length;
+				length = (length <= 0) ? 10 : length;
 				stmt.setInt(2, length);
 			}
 			ResultSet rs = stmt.executeQuery();
@@ -217,7 +217,7 @@ public class EventResource {
 	@Consumes(MediaType.GVENT_API_EVENT)
 	@Produces(MediaType.GVENT_API_EVENT)
 	public Event createEvent(Event event) {
-		// validateSting(Event); VALIDARRRRRRR
+	
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -231,15 +231,13 @@ public class EventResource {
 			String sql = buildInsertEvent();
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-			// stmt.setString(1, security.getUserPrincipal().getName()); QUE
-			// OBTENGA EL USERNAME DEL LOGEADO
+			
 			stmt.setString(1, event.getTitle());
 			stmt.setString(2, event.getCoordX());
 			stmt.setString(3, event.getCoordY());
 			stmt.setString(4, event.getCategory());
 			stmt.setString(5, event.getDescription());
-			stmt.setString(6, event.getOwner());// stmt.setString(1,
-												// security.getUserPrincipal().getName());
+			stmt.setString(6, event.getOwner());
 			stmt.setString(7, event.getState());
 			stmt.setBoolean(8, event.isPublicEvent());
 			stmt.setDate(9, event.getEventDate());
@@ -272,7 +270,7 @@ public class EventResource {
 		return "INSERT INTO events(title, coord_x, coord_y, category, description, owner, state, public, event_date, popularity) value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	}
 
-	@GET //// SI SE BUSCA UN TTITULO CON ESPACIOS DEVUELTE TODOS LOS QUE TENGAN ESPACIOS :S:S:S
+	@GET
 	@Path("/search")
 	@Produces(MediaType.GVENT_API_EVENT_COLLECTION)
 	public EventCollection searchEvent(@QueryParam("category") String category,
@@ -354,7 +352,6 @@ public class EventResource {
 	@Consumes(MediaType.GVENT_API_EVENT)
 	@Produces(MediaType.GVENT_API_EVENT)
 	public Event updateEvent(@PathParam("eventId") String eventId, Event event) {
-		// VALIDACIONES
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -407,7 +404,6 @@ public class EventResource {
 	@DELETE
 	@Path("/{eventId}")
 	public void deleteEvent(@PathParam("eventId") String eventId) {
-		//VALIDAR
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -446,7 +442,7 @@ public class EventResource {
 	
 	@GET
 	@Path("/{eventId}/comments")
-	@Produces(MediaType.GVENT_API_COMMENT_COLLECTION)  ////FALTAN INJECT LINKS PARA PAGINAR EN COMMENTCOLLECTION
+	@Produces(MediaType.GVENT_API_COMMENT_COLLECTION)  
 	public CommentCollection getComments(@QueryParam("length") int length,
 			@QueryParam("before") long before, @QueryParam("after") long after, @PathParam("eventId") int eventId) {
 		CommentCollection comments = new CommentCollection();
@@ -595,7 +591,7 @@ public class EventResource {
 	@Consumes(MediaType.GVENT_API_COMMENT)
 	@Produces(MediaType.GVENT_API_COMMENT)
 	public Comment createComment(Comment comment, @PathParam("eventId") String eventId) {
-		// validateSting(Event); VALIDARRRRRRR
+		
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -609,8 +605,6 @@ public class EventResource {
 			String sql = buildInsertComment();
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-			// stmt.setString(1, security.getUserPrincipal().getName()); QUE
-			// OBTENGA EL USERNAME DEL LOGEADO
 			stmt.setString(1, comment.getUsername());
 			stmt.setInt(2, Integer.valueOf(eventId));
 			stmt.setString(3, comment.getComment());
@@ -646,7 +640,7 @@ public class EventResource {
 	@DELETE
 	@Path("/{eventId}/comments/{commentId}")
 	public void deleteComment(@PathParam("eventId") String eventId, @PathParam("commentId") int commentId) {
-		//VALIDAR
+	
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -685,7 +679,7 @@ public class EventResource {
 	////////////////////USERS///////////////
 	@GET
 	@Path("/{eventId}/users")
-	@Produces(MediaType.GVENT_API_USER_COLLECTION)  ////FALTAN INJECT LINKS PARA PAGINAR EN COMMENTCOLLECTION
+	@Produces(MediaType.GVENT_API_USER_COLLECTION) 
 	public UserCollection getUsers(@QueryParam("length") int length,
 			@QueryParam("before") long before, @QueryParam("after") long after, @PathParam("eventId") int eventId) {
 		UserCollection users = new UserCollection();
@@ -757,7 +751,6 @@ public class EventResource {
 	@Consumes(MediaType.GVENT_API_USER)
 	@Produces(MediaType.GVENT_API_USER)
 	public void addUser(User user, @PathParam("eventId") String eventId) {
-		// validateSting(Event); VALIDARRRRRRR
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -771,8 +764,6 @@ public class EventResource {
 			String sql = buildInsertUser();
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-			// stmt.setString(1, security.getUserPrincipal().getName()); QUE
-			// OBTENGA EL USERNAME DEL LOGEADO
 			stmt.setString(1, user.getUsername());
 			stmt.setInt(2, Integer.valueOf(eventId));
 			stmt.executeUpdate();
@@ -800,7 +791,7 @@ public class EventResource {
 	@Consumes(MediaType.GVENT_API_USER)
 	@Path("/{eventId}/users")
 	public void deleteUser(@PathParam("eventId") String eventId, User user) {
-		//VALIDAR
+
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();

@@ -1,11 +1,4 @@
 var API_URL= "http://localhost:8080/gvent-api/";
-var USERNAME = "";
-var PASSWORD = "";
-// Autenticacion
-/*
- * $.ajaxSetup({ headers: { 'Authorization': "Basic "+
- * btoa(USERNAME+':'+PASSWORD) } });
- */
 
 var eventURL;
 var eventID;
@@ -15,23 +8,23 @@ var lng;
 
 $('#save_settings').click(function(e){
 	e.preventDefault();
-	console.log("ESTOY AQUI");
-	var event = new Object();
-	event.title = $('#event_title').val();
-	event.description = $('#event_description').val();
-	event.coordX = $('#event_coordX').val();//'-34.29806835099083';
-	event.coordY = $('#event_coordY').val();//'147.94464111328125';
-	event.eventDate = $('#event_date').val();
-	event.state =  document.getElementById("select_state").value;
-	//console.log(document.getElementById("select_category").value);
-	event.category = document.getElementById("select_category").value;
-	//alert("X " + event.coordX + " Y " +event.coordY );
-	var type = 'application/vnd.gvent.api.event+json';
-	//console.log("llego");
-	updateEvent(eventURL, type, JSON.stringify(event), function(event){
-		console.log("exitooooooooooooooooooooooooooooo");
-		window.location.replace("event.html");
-	});
+	$('#result_create').text('');
+	if ($('#event_title').val() == "" || $('#event_coordX').val() == "" || $('#event_date').val() == ""	) {
+		$('<div class="alert alert-danger">Rellena todos los campos obligatorios por favor </div>').appendTo($("#result_edit"));
+	}else{
+		var event = new Object();
+		event.title = $('#event_title').val();
+		event.description = $('#event_description').val();
+		event.coordX = $('#event_coordX').val();
+		event.coordY = $('#event_coordY').val();
+		event.eventDate = $('#event_date').val();
+		event.state =  document.getElementById("select_state").value;
+		event.category = document.getElementById("select_category").value;
+		var type = 'application/vnd.gvent.api.event+json';
+		updateEvent(eventURL, type, JSON.stringify(event), function(event){
+			window.location.replace("event.html");
+		});
+	}
 });
 
 
@@ -42,8 +35,8 @@ $('#logout_btn').click(function(e){
 $(document).ready(function(){
 	eventURL=$.cookie('link-event');
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
-	console.log($.cookie('username'));
-	console.log(eventURL);
+
+	
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;
 		loadEvent(eventURL);
@@ -52,9 +45,7 @@ $(document).ready(function(){
 });
 
 function loadEvent(url){
-	console.log("cargando evento");
 	getEvent(url, function (event){
-		console.log("obteniendo evento");
 		var eventID= event.id;
 		$('#event_title').val(event.title);
 		$('#event_description').text(event.description);

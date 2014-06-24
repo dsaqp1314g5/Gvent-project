@@ -1,16 +1,7 @@
 var API_URL= "http://localhost:8080/gvent-api/";
-var USERNAME = "";
-var PASSWORD = "";
-// Autenticacion
-/*
- * $.ajaxSetup({ headers: { 'Authorization': "Basic "+
- * btoa(USERNAME+':'+PASSWORD) } });
- */
-
 
 $(document).ready(function() {
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
-	console.log($.cookie('username'));
 });
 
 var usernameFriend;
@@ -33,6 +24,7 @@ $('#add_friend').click(function(e){
 	var user = new Object();
 	user.username = usernameFriend;
 	url = $.cookie('link-user');
+	type = 'application/vnd.gvent.api.user+json';
 	addFriend(url, type, JSON.stringify(user), function(user){
 		window.location.reload();
 	});
@@ -49,9 +41,7 @@ $(document).ready(function(){
 
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;
-		//loadEvents(rootAPI.getLink('events').href);
 	});
-	console.log("el usuario es " + $.cookie('rol'));
 	if($.cookie('rol')=='admin'){
 		$('#delete_user').show();
 	}
@@ -86,12 +76,9 @@ function loadMyEvents(url){
 	
 }
 function loadFriends(url){
-	console.log("hola");
 	var users = getUsers(url, function(userCollection){
-		console.log("hola2");
 		$.each(userCollection.users, function(index,item){
 			var user = new User(item);
-			console.log(user.name);
 
 			var link = $('<div class="well well-sm"><div class="media" ><a class="thumbnail pull-left"> <img class="media-object" src="./img/profile.png" height="70" width="70"></a><div class="media-body"><h4 class="media-heading">'+user.username+'</h4><p><a class="btn btn-xs btn-default" id="profile"><span class="glyphicon glyphicon-user"></span>Ver perfil</a></p></div></div></div>');
 			
@@ -113,7 +100,6 @@ function loadMyFriends(url){
 		var alreadyFriend;
 		$.each(userCollection.users, function(index,item){
 			var user = new User(item);
-			console.log("usernameFriend : " +usernameFriend);
 			if(user.username == usernameFriend){
 				alreadyFriend = true;
 			}
@@ -130,7 +116,6 @@ function loadMyFriends(url){
 
 
 function loadMyProfile(url){
-	console.log("la url es " + url);
 	getUser(url, function(user){
 		var date = new Date(user.registerDate);
 		var day = date.getDate();

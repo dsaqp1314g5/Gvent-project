@@ -11,8 +11,12 @@ $(document).ready(function(){
 
 $('#create_btn').click(function(e){
 	e.preventDefault();
-	console.log("borra este log");
-	createEvent2();
+	$('#result_create').text('');
+	if ($('#event_title').val() == "" || $('#event_coordX').val() == "" || $('#event_date').val() == ""	) {
+		$('<div class="alert alert-danger">Rellena todos los campos obligatorios por favor </div>').appendTo($("#result_create"));
+	}else{
+		createEvent2();
+	}
 });
 
 
@@ -55,12 +59,6 @@ function initialize() {
 	    deleteMarkers();
 	    addMarker(myLatlng);
 	    
-	  /*  var marker = new google.maps.Marker({
-	        position: myLatlng,
-	        map: map,
-	        title: 'Nuevo evento'
-	    });
-*/
 	    $('#event_coordX').val(lat);
 	    $('#event_coordY').val(lng);
 	});
@@ -122,22 +120,10 @@ function createEvent2(){
 	event.category = document.getElementById("select_category").value;
 	event.description = $('#event_description').val();
 	event.owner = $.cookie('username');
-	var date = new Date(event.eventDate);
-	//event.coordX = '2222';
-	//event.coordY = '3333';
-	//var position=document.getElementById('category').options.selectedIndex; 
-	//event.category = "deportes"; //document.getElementById('category').options[position].text;
 	event.state = "Abierto";
 	event.publicEvent = true;
-	event.date = "2012-12-11";//$('#event_date').val();
-	alert(date);
+	event.eventDate = $('#event_date').val();
 	event.popularity = 0;
-	//console.log(eventsURL.type);
-	console.log(eventsURL.href);
-	console.log(eventsURL.type);
-	console.log(JSON.stringify(event));
-
-	alert('stop');
 	createEvent(eventsURL.href, eventsURL.type, JSON.stringify(event), function(event){
 		window.location.replace("home.html");
 	});

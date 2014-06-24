@@ -82,11 +82,6 @@ html,body {
 						<li><a href="events.html"><i
 								class="glyphicon glyphicon-inbox" style="color: #11dd11;"></i>
 								Eventos</a></li>
-						<li class="nav-divider"></li>
-						<li><a href="#"><i class="glyphicon glyphicon-cog"
-								style="color: #dd1111;"></i> Configuraciones</a></li>
-						<li><a href="#"><i class="glyphicon glyphicon-plus"></i>
-								Más..</a></li>
 					</ul>
 
 
@@ -137,12 +132,6 @@ html,body {
 						</div>
 
 						<div class="control-group">
-							<div class="col-xs-12">
-								<div class="checkbox">
-									<label> <input type="checkbox" value=""> Marcar
-											si se trata de un evento privado </label>
-								</div>
-							</div>
 
 							<div class="form-group">
 
@@ -160,7 +149,7 @@ html,body {
 
 								<div class="col-xs-6">
 									<label for="first_name"><h4>Coordenada X</h4></label> <input
-										type="text" class="form-control" id="event_coordX"
+										type="text" readonly="readonly" class="form-control" id="event_coordX"
 										placeholder="coordenada X">
 								</div>
 							</div>
@@ -168,7 +157,7 @@ html,body {
 
 								<div class="col-xs-6">
 									<label for="last_name"><h4>Coordenada Y</h4></label> <input
-										type="text" class="form-control" id="event_coordY"
+										type="text" readonly="readonly" class="form-control" id="event_coordY"
 										placeholder="coordenada Y">
 								</div>
 							</div>
@@ -194,14 +183,19 @@ html,body {
 									</select>
 								</div>
 
-
+							
 
 
 							</div>
+							
 							<!-- Control-group -->
 						</div>
-
+						<div class="row pull-left" style="margin-top: 10px; margin-left:15px;" >
+						
+							<div id="result_create"></div>
+						</div>
 						<div class="row pull-right" style="margin-top: 10px;" >
+						
 							<div class="form-group">
 								<div class="col-xs-12">
 									<br>

@@ -111,7 +111,7 @@ public class UserResource {
 
 	@GET
 	@Path("/{username}")
-	@Produces(MediaType.GVENT_API_EVENT)
+	@Produces(MediaType.GVENT_API_USER)
 	public Response getUser(@PathParam("username") String username,
 			@Context Request request) {
 		// Create CacheControl
@@ -188,7 +188,7 @@ public class UserResource {
 	@Consumes(MediaType.GVENT_API_USER)
 	@Produces(MediaType.GVENT_API_USER)
 	public User createUser(User user) {
-		// validateSting(Event); VALIDARRRRRRR
+		
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -251,8 +251,7 @@ public class UserResource {
 	@GET
 	@Path("/search")
 	@Produces(MediaType.GVENT_API_USER_COLLECTION)
-	public UserCollection searchUser(@QueryParam("username") String username,
-			@QueryParam("title") String title, @QueryParam("length") int length) {
+	public UserCollection searchUser(@QueryParam("username") String username, @QueryParam("length") int length) {
 
 		UserCollection users = new UserCollection();
 
@@ -311,7 +310,7 @@ public class UserResource {
 	@Consumes(MediaType.GVENT_API_USER)
 	@Produces(MediaType.GVENT_API_USER)
 	public User updateUser(@PathParam("username") String username, User user) {
-		// VALIDACIONES
+		
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -359,7 +358,7 @@ public class UserResource {
 	@DELETE
 	@Path("/{username}")
 	public void deleteUser(@PathParam("username") String username) {
-		//VALIDAR
+		
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -399,7 +398,7 @@ public class UserResource {
 	@Consumes(MediaType.GVENT_API_USER)
 	@Produces(MediaType.GVENT_API_USER)
 	public void addFriend(@PathParam("username") String username, User user) {
-		// validateSting(Event); VALIDARRRRRRR
+		
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -415,18 +414,6 @@ public class UserResource {
 			stmt.setString(1, username);
 			stmt.setString(2, user.getUsername());
 			stmt.executeUpdate();
-			/*stmt.setString(1, user.getUsername());
-			stmt.setString(2, user.getName());
-			stmt.setString(3, user.getEmail());
-			stmt.executeUpdate();
-			ResultSet rs = stmt.getGeneratedKeys();
-			if (rs.next()) {
-				String username = rs.getString(1);
-
-				user = getUserFromDatabase(username);
-			} else {
-				// Something has failed...
-			}*/
 		} catch (SQLException e) {
 			throw new ServerErrorException(e.getMessage(),
 					Response.Status.INTERNAL_SERVER_ERROR);
@@ -439,7 +426,6 @@ public class UserResource {
 			}
 		}
 
-		//return user;
 	}
 
 	private String buildInsertFriend(){
@@ -521,7 +507,6 @@ public class UserResource {
 	@Consumes(MediaType.GVENT_API_USER)
 	@Path("/{username}/friends")
 	public void deleteFriend(@PathParam("username") String username,  User user) {
-		//VALIDAR
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -556,7 +541,6 @@ public class UserResource {
 		return "DELETE FROM friends WHERE username_a = ? AND username_b = ?";
 	}
 	
-	//// EVENTS
 	
 	
 	@GET
@@ -587,7 +571,6 @@ public class UserResource {
 				length = (length <= 0) ? 20 : length;
 				stmt.setInt(3, length);
 			}
-			//String username = username; //security.getUserPrincipal().getName();
 			stmt.setString(2, username);
 			ResultSet rs = stmt.executeQuery();
 			boolean first = true;
@@ -665,7 +648,6 @@ public class UserResource {
 				length = (length <= 0) ? 20 : length;
 				stmt.setInt(3, length);
 			}
-			//String username = username; //security.getUserPrincipal().getName();
 			stmt.setString(2, username);
 			ResultSet rs = stmt.executeQuery();
 			boolean first = true;
@@ -745,7 +727,6 @@ public class UserResource {
 				length = (length <= 0) ? 20 : length;
 				stmt.setInt(3, length);
 			}
-			//String username = username; //security.getUserPrincipal().getName();
 			stmt.setString(2, username);
 			ResultSet rs = stmt.executeQuery();
 			boolean first = true;

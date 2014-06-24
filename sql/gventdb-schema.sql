@@ -28,7 +28,7 @@ create table events (
 	coord_x		varchar(25) not null,
 	coord_y		varchar(25) not null,
 	category	varchar(20) not null,
-	description	varchar(200) not null,
+	description	varchar(500),
 	owner		varchar(20) not null,
 	state		varchar(10) not null,
 	public		boolean not null,
@@ -44,22 +44,15 @@ create table comments (
 	event_id		int not null,
 	comment			varchar(200) not null,
 	last_modified	timestamp not null,
-	foreign key(username) references users(username),
-	foreign key(event_id) references events(id)
-);
-
-create table images (
-	id			int not null auto_increment primary key,
-	username 	varchar(20) not null,
-	image		varchar(1) not null,
-	foreign key(username) references users(username)
+	foreign key(username) references users(username) on delete cascade,
+	foreign key(event_id) references events(id) on delete cascade
 );
 
 create table event_users (
 	event_id	int not null,
 	username	varchar(20) not null,
-	foreign key(username) references users(username),
-	foreign key(event_id) references events(id),
+	foreign key(username) references users(username) on delete cascade,
+	foreign key(event_id) references events(id) on delete cascade,
 	primary key (event_id, username)
 );
 
