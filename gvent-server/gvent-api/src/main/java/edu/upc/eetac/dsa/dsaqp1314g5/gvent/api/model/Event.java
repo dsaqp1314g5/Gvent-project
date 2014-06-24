@@ -35,8 +35,6 @@ public class Event {
 	private long creationDate;
 	private Date eventDate;
 	private int popularity;
-	private double puntuation;
-	private int votes;
 	
 	
 	public List<Link> getLinks() {
@@ -117,19 +115,6 @@ public class Event {
 	}
 	public void setPopularity(int popularity) {
 		this.popularity = popularity;
-	}
-	
-	public double getPuntuation() {
-		return puntuation;
-	}
-	public void setPuntuation(double puntuation) {
-		this.puntuation = puntuation;
-	}
-	public int getVotes() {
-		return votes;
-	}
-	public void setVotes(int votes) {
-		this.votes = votes;
 	}
 	
 

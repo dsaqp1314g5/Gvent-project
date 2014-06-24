@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>Geolocalization Events (GVent)</title>
+<meta name="generator" content="Bootply" />
+
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<link
+	href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!--[if lt IE 9]>
+          <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+<!--<link href="css/theme.css" rel="stylesheet"> -->
+<link href="css/business-casual.css" rel="stylesheet">
+-->
+
+
+<!-- style para map container -->
+<style>
+#map-container {
+	height: 300px
+}
+</style>
+</head>
+
+<body>
+
+
+	<!-- Barra de navegación fija on top -->
+	<div class="navbar navbar-fixed-top header">
+		<div class="navbar navbar-default" id="subnav">
+			<div class="col-md-12">
+				<div class="navbar-header">
+
+
+					<!-- Menu desplegable izquierda barra navegación -->
+					<a href="#" style="margin-left: 15px;"
+						class="navbar-btn btn btn-default btn-plus dropdown-toggle"
+						data-toggle="dropdown"><i class="glyphicon glyphicon-home"
+						style="color: #dd1111;"></i> GVent Menu <small><i
+							class="glyphicon glyphicon-chevron-down"></i></small></a>
+					<ul class="nav dropdown-menu">
+
+						<li><a href="home.html"><i
+								class="glyphicon glyphicon-home" style="color: #1111dd;"></i>
+								Home</a></li>
+						<li><a href="user_profile.html"><i
+								class="glyphicon glyphicon-user" style="color: #1111dd;"></i>
+								Profile</a></li>
+						<li><a href="create_event.html"><i
+								class="glyphicon glyphicon-dashboard" style="color: #0000aa;"></i>
+								Crear evento</a></li>
+						<li><a href="events.html"><i
+								class="glyphicon glyphicon-inbox" style="color: #11dd11;"></i>
+								Eventos</a></li>
+					</ul>
+
+
+
+					<!-- Botones derecha barra navegación -->
+					<button type="button" class="navbar-toggle" data-toggle="collapse"
+						data-target="#navbar-collapse2">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+
+				</div>
+				<div class="collapse navbar-collapse" id="navbar-collapse2">
+					<ul class="nav navbar-nav navbar-right">
+						<li class="active" id="user_loged"></li>
+						<li><a href="index.html" role="button" id="logout_btn">Logout</a></li>
+						<li><a href="#aboutModal" role="button" data-toggle="modal">About</a></li>
+						<li><a href="#" id="btnToggle"><i
+								class="glyphicon glyphicon-th-large"></i></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--main-->
+
+
+	<p style="margin-top: 85px">
+		<div class="container">
+
+		<div class="row">
+			<div class="box">
+
+				<form class="form" action="##" method="post" id="registration_form">
+
+					<div class="form-group">
+						<div class="col-xs-6">
+							<label for="name"><h4>Nombre</h4></label> <input type="text"
+								class="form-control" name="first_name" id="name"
+								placeholder="Nombre" title="Escribe tu nombre.">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-xs-6">
+							<label for="email"><h4>Email</h4></label> <input type="email"
+								class="form-control" name="email" id="email"
+								placeholder="you@email.com" title="Escribe aqui tu email.">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-xs-6">
+							<label for="password"><h4>Password</h4></label> <input
+								type="password" class="form-control" name="password"
+								id="password" placeholder="password"
+								title="enter your password.">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-xs-6">
+							<label for="verify"><h4>Verifica tu password</h4></label> <input
+								type="password" class="form-control" name="verify" id="verify"
+								placeholder="password" title="enter your password2.">
+						</div>
+					</div>
+
+
+					<div class="form-group">
+						<div class="col-xs-6">
+							<br>
+							<button class="btn btn-lg btn-success" type="submit"
+								id="save_btn">
+								<i class="glyphicon glyphicon-ok-sign"></i> Guardar
+							</button>
+						</div>
+					</div>
+				</form>
+				<div class="form-group">
+					<div class="col-xs-6" id="result_edit_process"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+			<br>
+	<div class="clearfix"></div>
+			<footer>
+				<hr>
+				<div class="col-md-12 text-center">
+					<p>
+						<a href="index.html" target="_ext">Gestiona tus eventos con
+							GVent</a><br>Proyecto de DSA realizado por Alejandro, Miguel y
+						Rubén
+				
+		</div>
+				<hr>
+			</footer>
+			<!--/row-->
+
+			</p>
+			<!--/main-->
+
+
+
+
+			<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+			<script
+		src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+			<!-- Include all compiled plugins (below), or include individual files as needed -->
+			<script
+		src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+			<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+
+
+
+
+			<!--about modal-->
+			<div id="aboutModal" class="modal fade" tabindex="-1" role="dialog"
+		aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true"></button>
+							<h2 class="text-center">About</h2>
+						</div>
+						<div class="modal-body">
+							<div class="col-md-12 text-center">
+								Esta es la web del proyecto de:<br>
+								<ul>
+									<li>Alejandro Martin</li>
+									<li>Miguel Delgado</li>
+									<li>Rubén</li>
+								</ul>
+								Esta basada en el template de Google plus de Bootply
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button class="btn" data-dismiss="modal" aria-hidden="true">OK</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+
+
+			<!-- JavaScript jQuery code from Bootply.com editor -->
+
+			<script type='text/javascript'>
+				$(document).ready(
+						function() {
+
+							/* toggle layout */
+							$('#btnToggle').click(
+									function() {
+										if ($(this).hasClass('on')) {
+											$('#main .col-md-6').addClass(
+													'col-md-4').removeClass(
+													'col-md-6');
+											$(this).removeClass('on');
+										} else {
+											$('#main .col-md-4').addClass(
+													'col-md-6').removeClass(
+													'col-md-4');
+											$(this).addClass('on');
+										}
+									});
+
+						});
+			</script>
+
+
+			<script type="text/javascript" src="./js/api.js"></script>
+			<script type="text/javascript" src="./js/linkheaders.js"></script>
+			<script type="text/javascript" src="./js/jquery.base64.js"></script>
+			<script type="text/javascript" src="./js/uritemplate.js"></script>
+			<script type="text/javascript" src="./js/edit.profile.js"></script>
+			<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+</body>
+</html>

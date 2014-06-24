@@ -1,20 +1,32 @@
 var map;
 var eventsURL;
+var markers =[];
 $(document).ready(function(){
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
 	initialize();
 	loadRootAPI(function(rootAPI){
-		eventsURL = rootAPI.getLink('events');
+		eventsURL = rootAPI.getLink('create-event');
 	});
 });
 
 $('#create_btn').click(function(e){
-	createEvent();
+	e.preventDefault();
+	$('#result_create').text('');
+	if ($('#event_title').val() == "" || $('#event_coordX').val() == "" || $('#event_date').val() == ""	) {
+		$('<div class="alert alert-danger">Rellena todos los campos obligatorios por favor </div>').appendTo($("#result_create"));
+	}else{
+		createEvent2();
+	}
+});
+
+
+$('#logout_btn').click(function(e){
+	deleteCookie('username');
 });
 
 function initialize() {
   var mapOptions = {
-    zoom: 6
+    zoom: 15
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
@@ -44,16 +56,11 @@ function initialize() {
 	    var lat = event.latLng.lat();
 	    var lng = event.latLng.lng();
 	    var myLatlng = new google.maps.LatLng(lat,lng);
+	    deleteMarkers();
+	    addMarker(myLatlng);
 	    
-	    
-	    var marker = new google.maps.Marker({
-	        position: myLatlng,
-	        map: map,
-	        title: 'Nuevo evento'
-	    });
-
-	    $('#coordX').val(lat);
-	    $('#coordY').val(lng);
+	    $('#event_coordX').val(lat);
+	    $('#event_coordY').val(lng);
 	});
 }
 
@@ -74,28 +81,50 @@ function handleNoGeolocation(errorFlag) {
   map.setCenter(options.position);
 }
 
+function addMarker(myLatlng) {
+	  markers.push(new google.maps.Marker({
+	    position: myLatlng,
+	    map: map,
+	    draggable: false,
+        title: 'Nuevo evento'
+	  }));
+	}
+
+	function setAllMap(map) {
+		  for (var i = 0; i < markers.length; i++) {
+		    markers[i].setMap(map);
+		  }
+		}
+
+	function clearMarkers() {
+		  setAllMap(null);
+		}
+
+	function showMarkers() {
+		  setAllMap(map);
+		}
+
+	function deleteMarkers() {
+		  clearMarkers();
+		  markers = [];
+		}
+
 google.maps.event.addDomListener(window, 'load', initialize);
 
 
-function createEvent(){
-
+function createEvent2(){
 	var event = new Object();
 	event.title = $('#event_title').val();
-	event.description = $('#event_description').text();
 	event.coordX = $('#event_coordX').val();
 	event.coordY = $('#event_coordY').val();
-	//var position=document.getElementById('category').options.selectedIndex; 
-	event.category = "deportes"; //document.getElementById('category').options[position].text;
+	event.category = document.getElementById("select_category").value;
+	event.description = $('#event_description').val();
 	event.owner = $.cookie('username');
 	event.state = "Abierto";
 	event.publicEvent = true;
-	event.date = "2014-09-08";//$('#event_date').val();
+	event.eventDate = $('#event_date').val();
 	event.popularity = 0;
-	event.puntuation = 0;
-	event.votes = 0;
-	console.log(eventsURL.type);
 	createEvent(eventsURL.href, eventsURL.type, JSON.stringify(event), function(event){
-		console.log("exitooooooooooooooooooooooooooooo");
-		window.location.replace("/home.html");
+		window.location.replace("home.html");
 	});
 }

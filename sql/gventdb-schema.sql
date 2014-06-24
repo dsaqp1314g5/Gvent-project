@@ -5,9 +5,9 @@ use gventdb;
 
 create table users (
 	name		varchar(50) not null,
-	username	varchar(20) not null,
+	username	varchar(50) not null,
 	userpass	char(32) not null,
-	email		varchar(20) not null,
+	email		varchar(50) not null,
 	register_date timestamp not null,
 	primary key (username)
 
@@ -25,18 +25,16 @@ create table user_roles (
 create table events (
 	id 			int not null auto_increment primary key,
 	title		varchar(50) not null,
-	coord_x		varchar(10) not null,
-	coord_y		varchar(10) not null,
+	coord_x		varchar(25) not null,
+	coord_y		varchar(25) not null,
 	category	varchar(20) not null,
-	description	varchar(200) not null,
+	description	varchar(500),
 	owner		varchar(20) not null,
 	state		varchar(10) not null,
 	public		boolean not null,
 	creation_date	timestamp not null,
 	event_date	date,
 	popularity integer,
-	puntuation double,
-	votes integer,
 	foreign key(owner) references users(username) on delete cascade
 );
 
@@ -46,22 +44,15 @@ create table comments (
 	event_id		int not null,
 	comment			varchar(200) not null,
 	last_modified	timestamp not null,
-	foreign key(username) references users(username),
-	foreign key(event_id) references events(id)
-);
-
-create table images (
-	id			int not null auto_increment primary key,
-	username 	varchar(20) not null,
-	image		varchar(1) not null,
-	foreign key(username) references users(username)
+	foreign key(username) references users(username) on delete cascade,
+	foreign key(event_id) references events(id) on delete cascade
 );
 
 create table event_users (
 	event_id	int not null,
 	username	varchar(20) not null,
-	foreign key(username) references users(username),
-	foreign key(event_id) references events(id),
+	foreign key(username) references users(username) on delete cascade,
+	foreign key(event_id) references events(id) on delete cascade,
 	primary key (event_id, username)
 );
 

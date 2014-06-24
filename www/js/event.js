@@ -1,11 +1,4 @@
 var API_URL= "http://localhost:8080/gvent-api/";
-var USERNAME = "";
-var PASSWORD = "";
-// Autenticacion
-/*
- * $.ajaxSetup({ headers: { 'Authorization': "Basic "+
- * btoa(USERNAME+':'+PASSWORD) } });
- */
 
 var eventURL;
 var eventID;
@@ -15,15 +8,35 @@ var lng;
 var eventTitle;
 var link_owner;
 $("#post_comment").click(function(e){
+	e.preventDefault();
 	postComment();
 });
 
 $("#settings_btn").click(function(e){
+	e.preventDefault();
 	window.location.replace("/edit_event.html");
 });
 
 $("#follow_btn").click(function(e){
+	e.preventDefault();
 	joinEvent();
+}); 
+
+$("#unfollow_btn").click(function(e){
+	e.preventDefault();
+	leaveEvent();
+}); 
+
+$('#logout_btn').click(function(e){
+	e.preventDefault();
+	deleteCookie('username');
+});
+
+$('#delete_event_btn').click(function(e){
+	e.preventDefault();
+	deleteUser(eventURL, function(){
+		window.location.replace("/home.html");
+	});
 });
 
 
@@ -37,37 +50,37 @@ $(document).ready(function(){
 		loadEvent(eventURL);
 	});
 	
-	
+
 	var followedEventsURL=$.cookie('link-user')+'/events/followed';
 	var myEventsURL=$.cookie('link-user')+'/events';
 	var myFriendsURL=$.cookie('link-user')+'/friends';
 	var myURL =$.cookie('link-user');
-	//loadMyEvents(myEventsURL);
 	loadFollowers(eventURL+"/users");
-	//loadMyProfile(myURL);
+	
 });
 
 function loadEvent(url){
 	getEvent(url, function (event){
-		var date = new Date(event.creationDate);
+		var date = new Date(event.eventDate);
 		var day = date.getDate();
 		var month = date.getMonth() + 1;
 		var year = date.getFullYear();
 		var event_date = day+'/'+month+'/'+year;
 		var eventID= event.id;
+		$.cookie('popularity', event.popularity);
 		eventTitle=event.title;
-		console.log("la coord X es" + event.coordX);
-		console.log("la coord Y es" + event.coordY);
-		$('<h3>' + event.owner + '</h3>').appendTo($('#event_owner'));
+		var owner = event.owner;
+		$('<h3>' + event.owner + '</h3><br><br><br><br>').appendTo($('#event_owner'));
 		$('<h1>' + event.title + '</h1>').appendTo($('#info_event'));
 		$('<h2>' + event.category + '</h2>').appendTo($('#info_event'));
-		$('<h3>' + event_date + '</h3>').appendTo($('#info_event'));
-		$('<h6>' + event.description + '</h6>').appendTo($('#event_description'));
-		//console.log(event.getLink());
-		if(event.owner ==  $.cookie('username')){
+		$('<h4>' + event_date + '</h4>').appendTo($('#info_event'));
+		$('<h6>' + event.description + '</h6>').appendTo($('#info_event'));
+		if(event.owner.toUpperCase() ==  $.cookie('username').toUpperCase()){
 			$('#event_settings').show();
-		}else{
-			$('#event_follow').show();
+		}
+
+		if($.cookie('rol')=='admin' || $.cookie('username').toUpperCase()==owner.toUpperCase()){
+			$('#delete_event').show();
 		}
 		lat = event.coordX;
 		lng = event.coordY;
@@ -113,7 +126,6 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 function loadComments(url){
 	var comments = getComments(url, function(commentCollection){
-		console.log(commentCollection.comments.length);
 		$.each(commentCollection.comments, function(index, item){
 			var comment = new Comment(item);
 			var date = new Date(comment.lastModified);
@@ -129,39 +141,38 @@ function loadComments(url){
 	});
 	
 }
- 
-function loadMyEvents(url){
-	var events = getEvents(url, function(eventCollection){
-		$.each(eventCollection.events, function(index,item){
-			var event = new Event(item);
-			$('<tr><td>' + event.title +'</td><td>' + event.category + '</td><td>' + event.popularity + '</td><td>' + event.state +'</td>' ).appendTo($('#result_my_events'));
-		});
-		
-	});
-	
-}
 
 function loadFollowers(url){
 	var users = getUsers(url, function(userCollection){
+		var following;
 		$.each(userCollection.users, function(index,item){
 			var user = new User(item);
-			console.log(user.name);
-			var link = $('<div class="well well-sm"><div class="media" ><a class="thumbnail pull-left"> <img class="media-object" src="./img/error.png" height="70" width="70"></a><div class="media-body"><h4 class="media-heading">'+user.name+'</h4><p><a class="btn btn-xs btn-default" id="profile"><span class="glyphicon glyphicon-user"></span>Ver perfil</a></p></div></div></div>');
+			var link = $('<div class="well well-sm"><div class="media" ><a class="thumbnail pull-left"> <img class="media-object" src="./img/profile.png" height="70" width="70"></a><div class="media-body"><h4 class="media-heading">'+user.username+'</h4><p><a class="btn btn-xs btn-default" id="profile"><span class="glyphicon glyphicon-user"></span>Ver perfil</a></p></div></div></div>');
 			link.click(function(e){
 				 $.cookie('link-friend',  user.getLink('self').href);
 				 window.location.replace("/friend_profile.html");
 			});
 			
+			if(user.username.toUpperCase() == $.cookie("username").toUpperCase()){
+				following = true;
+			}
+			
 			var div = $('<div></div>');
 			div.append(link);
 			$('#result_followers').append(div);
 		});
+		
+		if(following){
+			$('#event_follow').hide();
+			$('#event_unfollow').show();
+		}else{
+			$('#event_follow').show();
+			$('#event_unfollow').hide();
+		}
 	});	
 }
 
 function loadMyProfile(url){
-	console.log("hola");
-	console.log("la url es " + url);
 	getUser(url, function(user){
 		var date = new Date(user.registerDate);
 		var day = date.getDate();
@@ -182,7 +193,6 @@ function postComment(){
 		comment.username= $.cookie('username');
 		comment.comment = $('#comment_text').val();
 		comment.eventId = eventID;
-		console.log(comment.comment);
 		var type = 'application/vnd.gvent.api.comment+json';
 		createComment(eventURL+'/comments', type, JSON.stringify(comment), function(comment){
 			window.location.reload();
@@ -192,10 +202,30 @@ function postComment(){
 function joinEvent(){
 	var user = new Object();
 	user.username = $.cookie('username');
-	url = 'http://localhost:8080/gvent-api/events/1/users';
+	url = $.cookie('link-event')+'/users';
 	type = 'application/vnd.gvent.api.user+json';
 	followEvent(url, type, JSON.stringify(user), function(user){
-		window.location.reload();
+		var event = new Object();
+		event.popularity = parseInt($.cookie('popularity')) + 1;
+		updateEvent($.cookie('link-event'), 'application/vnd.gvent.api.event+json', JSON.stringify(event), function(event){
+			window.location.reload();
+		});
 	});
 	
+	
 }
+
+function leaveEvent(){
+	var user = new Object();
+	user.username = $.cookie('username');
+	url = $.cookie('link-event')+'/users';
+	type = 'application/vnd.gvent.api.user+json';
+	unfollowEvent(url, type, JSON.stringify(user), function(user){
+		var event = new Object();
+		event.popularity = parseInt($.cookie('popularity')) - 1;
+		updateEvent($.cookie('link-event'), 'application/vnd.gvent.api.event+json', JSON.stringify(event), function(event){
+			window.location.reload();
+		});
+	});
+}
+

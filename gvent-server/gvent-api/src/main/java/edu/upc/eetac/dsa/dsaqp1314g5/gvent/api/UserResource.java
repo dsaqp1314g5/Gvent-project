@@ -28,6 +28,8 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.Comment;
+import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.CommentCollection;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.Event;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.EventCollection;
 import edu.upc.eetac.dsa.dsaqp1314g5.gvent.api.model.User;
@@ -109,7 +111,7 @@ public class UserResource {
 
 	@GET
 	@Path("/{username}")
-	@Produces(MediaType.GVENT_API_EVENT)
+	@Produces(MediaType.GVENT_API_USER)
 	public Response getUser(@PathParam("username") String username,
 			@Context Request request) {
 		// Create CacheControl
@@ -186,7 +188,7 @@ public class UserResource {
 	@Consumes(MediaType.GVENT_API_USER)
 	@Produces(MediaType.GVENT_API_USER)
 	public User createUser(User user) {
-		// validateSting(Event); VALIDARRRRRRR
+		
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -196,6 +198,7 @@ public class UserResource {
 		}
 
 		PreparedStatement stmt = null;
+		PreparedStatement stmt2 = null;
 		try {
 			String sql = buildInsertUser();
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -213,6 +216,12 @@ public class UserResource {
 			} else {
 				// Something has failed...
 			}
+			
+
+			stmt2 = conn.prepareStatement(buildInsertRole(), Statement.RETURN_GENERATED_KEYS);
+			stmt2.setString(1, user.getUsername());
+			stmt2.setString(2, "registered");
+			stmt2.executeUpdate();
 		} catch (SQLException e) {
 			throw new ServerErrorException(e.getMessage(),
 					Response.Status.INTERNAL_SERVER_ERROR);
@@ -220,6 +229,9 @@ public class UserResource {
 			try {
 				if (stmt != null)
 					stmt.close();
+				if (stmt2 != null){
+					stmt2.close();
+				}
 				conn.close();
 			} catch (SQLException e) {
 			}
@@ -229,14 +241,17 @@ public class UserResource {
 	}
 
 	private String buildInsertUser() {
-		return "INSERT INTO users(username, userpass, name, email) value (?, ?, ?, ?)";
+		return "INSERT INTO users(username, userpass, name, email) values (?, ?, ?, ?)";
+	}
+	
+	private String buildInsertRole(){
+		return "INSERT INTO user_roles(username, rolename) values(?,?)";
 	}
 	
 	@GET
 	@Path("/search")
 	@Produces(MediaType.GVENT_API_USER_COLLECTION)
-	public UserCollection searchUser(@QueryParam("username") String username,
-			@QueryParam("title") String title, @QueryParam("length") int length) {
+	public UserCollection searchUser(@QueryParam("username") String username, @QueryParam("length") int length) {
 
 		UserCollection users = new UserCollection();
 
@@ -295,7 +310,7 @@ public class UserResource {
 	@Consumes(MediaType.GVENT_API_USER)
 	@Produces(MediaType.GVENT_API_USER)
 	public User updateUser(@PathParam("username") String username, User user) {
-		// VALIDACIONES
+		
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -343,7 +358,7 @@ public class UserResource {
 	@DELETE
 	@Path("/{username}")
 	public void deleteUser(@PathParam("username") String username) {
-		//VALIDAR
+		
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -382,8 +397,8 @@ public class UserResource {
 	@Path("/{username}")
 	@Consumes(MediaType.GVENT_API_USER)
 	@Produces(MediaType.GVENT_API_USER)
-	public void addFriend(@PathParam("username") String username, @QueryParam("friend") String friend) {
-		// validateSting(Event); VALIDARRRRRRR
+	public void addFriend(@PathParam("username") String username, User user) {
+		
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -397,20 +412,8 @@ public class UserResource {
 			String sql = buildInsertFriend();
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(1, username);
-			stmt.setString(2, friend);
+			stmt.setString(2, user.getUsername());
 			stmt.executeUpdate();
-			/*stmt.setString(1, user.getUsername());
-			stmt.setString(2, user.getName());
-			stmt.setString(3, user.getEmail());
-			stmt.executeUpdate();
-			ResultSet rs = stmt.getGeneratedKeys();
-			if (rs.next()) {
-				String username = rs.getString(1);
-
-				user = getUserFromDatabase(username);
-			} else {
-				// Something has failed...
-			}*/
 		} catch (SQLException e) {
 			throw new ServerErrorException(e.getMessage(),
 					Response.Status.INTERNAL_SERVER_ERROR);
@@ -423,7 +426,6 @@ public class UserResource {
 			}
 		}
 
-		//return user;
 	}
 
 	private String buildInsertFriend(){
@@ -502,9 +504,9 @@ public class UserResource {
 	
 	
 	@DELETE
+	@Consumes(MediaType.GVENT_API_USER)
 	@Path("/{username}/friends")
-	public void deleteFriend(@PathParam("username") String username,  @QueryParam("friend") String friend) {
-		//VALIDAR
+	public void deleteFriend(@PathParam("username") String username,  User user) {
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -517,7 +519,7 @@ public class UserResource {
 		try {
 			stmt = conn.prepareStatement(buildDeleteFriend());
 			stmt.setString(1, username);
-			stmt.setString(2, friend);
+			stmt.setString(2, user.getUsername());
 			int rows = stmt.executeUpdate();
 			if (rows == 0)
 				throw new NotFoundException("There is no user with username = "
@@ -539,7 +541,6 @@ public class UserResource {
 		return "DELETE FROM friends WHERE username_a = ? AND username_b = ?";
 	}
 	
-	//// EVENTS
 	
 	
 	@GET
@@ -570,7 +571,6 @@ public class UserResource {
 				length = (length <= 0) ? 20 : length;
 				stmt.setInt(3, length);
 			}
-			//String username = username; //security.getUserPrincipal().getName();
 			stmt.setString(2, username);
 			ResultSet rs = stmt.executeQuery();
 			boolean first = true;
@@ -590,8 +590,6 @@ public class UserResource {
 						.getTime());
 				event.setEventDate(rs.getDate(11));
 				event.setPopularity(rs.getInt("popularity"));
-				event.setPuntuation(rs.getDouble("puntuation"));
-				event.setVotes(rs.getInt("votes"));
 				oldestTimestamp = rs.getTimestamp("creation_date").getTime();
 				if (first) {
 					first = false;
@@ -650,7 +648,6 @@ public class UserResource {
 				length = (length <= 0) ? 20 : length;
 				stmt.setInt(3, length);
 			}
-			//String username = username; //security.getUserPrincipal().getName();
 			stmt.setString(2, username);
 			ResultSet rs = stmt.executeQuery();
 			boolean first = true;
@@ -670,8 +667,6 @@ public class UserResource {
 						.getTime());
 				event.setEventDate(rs.getDate(11));
 				event.setPopularity(rs.getInt("popularity"));
-				event.setPuntuation(rs.getDouble("puntuation"));
-				event.setVotes(rs.getInt("votes"));
 				oldestTimestamp = rs.getTimestamp("creation_date").getTime();
 				if (first) {
 					first = false;
@@ -700,6 +695,77 @@ public class UserResource {
 			return "SELECT e.*, r.username FROM event_users r, events e WHERE e.creation_date > ? AND r.username= ? AND e.id = r.event_id ORDER BY creation_date DESC";
 		else
 			return "SELECT e.*, r.username FROM event_users r, events e  WHERE e.creation_date < ifnull(?, now()) AND r.username= ? AND  e.id = r.event_id ORDER BY creation_date DESC LIMIT ?";
+	}
+	
+	//////COMMENTS
+	
+	@GET
+	@Path("/{username}/comments")
+	@Produces(MediaType.GVENT_API_COMMENT_COLLECTION)
+	public CommentCollection getComments(@QueryParam("length") int length,
+			@QueryParam("before") long before, @QueryParam("after") long after, @PathParam("username") String username) {
+		CommentCollection comments = new CommentCollection();
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+
+		PreparedStatement stmt = null;
+		try {
+			boolean updateFromLast = after > 0;
+			stmt = conn.prepareStatement(buildGetCommentsQuery(updateFromLast));
+			if (updateFromLast) {
+				stmt.setTimestamp(1, new Timestamp(after));
+			} else {
+				if (before > 0)
+					stmt.setTimestamp(1, new Timestamp(before));
+				else
+					stmt.setTimestamp(1, null);
+				length = (length <= 0) ? 20 : length;
+				stmt.setInt(3, length);
+			}
+			stmt.setString(2, username);
+			ResultSet rs = stmt.executeQuery();
+			boolean first = true;
+			long oldestTimestamp = 0;
+			while (rs.next()) {
+				Comment comment = new Comment();
+				comment.setId(rs.getInt("id"));
+				comment.setUsername(rs.getString("username"));
+				comment.setEventId(rs.getInt("event_id"));
+				comment.setComment(rs.getString("comment"));
+				comment.setLastModified(rs.getTimestamp("last_modified").getTime());
+				oldestTimestamp = rs.getTimestamp("last_modified").getTime();
+				if (first) {
+					first = false;
+					comments.setNewestTimestamp(comment.getLastModified());
+				}
+				comments.addComment(comment);
+			}
+			comments.setOldestTimestamp(oldestTimestamp);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		return comments;
+	}
+
+	private String buildGetCommentsQuery(boolean updateFromLast) {
+		if (updateFromLast)
+			return "SELECT * FROM comments c WHERE c.last_modified > ? AND c.username=? ORDER BY c.last_modified DESC";
+		else
+			return "SELECT * FROM comments c WHERE c.last_modified < ifnull(?, now()) AND c.username=?  ORDER BY c.last_modified DESC LIMIT ?";
 	}
 
 }

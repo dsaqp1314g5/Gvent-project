@@ -1,108 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
-        <meta charset="utf-8">
-        <title>Geolocalization Events (GVent)</title>
-        <meta name="generator" content="Bootply" />
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>Geolocalization Events (GVent)</title>
+<meta name="generator" content="Bootply" />
 
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-        <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet">
-        
-        <!--[if lt IE 9]>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<link
+	href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!--[if lt IE 9]>
           <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-                		
-		<link href="theme.css" rel="stylesheet">
-		<link href="css/business-casual.css" rel="stylesheet">
+
+<link href="theme.css" rel="stylesheet">
+<link href="css/business-casual.css" rel="stylesheet">
 
 
-		<!-- style para map container -->
-		<style>
-      		#map-container { height: 300px }
-    	</style>
-    </head>
-    
-    <body >
-        
+<!-- style para map container -->
+<style>
+#map-canvas {
+	height: 300px;
+	margin: 0px;
+	padding: 0px
+}
+</style>
+</head>
 
-        <!-- Barra de navegación fija on top -->
-	  	<div class="navbar navbar-fixed-top header">
+<body>
+
+
+	<!-- Barra de navegación fija on top -->
+	<div class="navbar navbar-fixed-top header">
 		<div class="navbar navbar-default" id="subnav">
 			<div class="col-md-12">
-				<div class="navbar-header">
-
-
-				
-                </div>
+				<div class="navbar-header"></div>
 
 				<div class="collapse navbar-collapse" id="navbar-collapse2">
-				  <ul class="nav navbar-nav navbar-right">
-					 
-					 <li><a href="#loginModal" role="button" data-toggle="modal">Login</a></li>
-					 <li><a href="#aboutModal" role="button" data-toggle="modal">About</a></li>
-					 <li><a href="#" id="btnToggle"><i class="glyphicon glyphicon-th-large"></i></a></li>
-				   </ul>
-				</div>	
-			 </div>	
-		</div>
-		</div>
+					<ul class="nav navbar-nav navbar-right">
 
-		<!--main-->
-		<p style="margin-top:85px">
+						<li><a href="#loginModal" role="button" data-toggle="modal">Login</a></li>
+						<li><a href="#aboutModal" role="button" data-toggle="modal">About</a></li>
+						<li><a href="#" id="btnToggle"><i
+								class="glyphicon glyphicon-th-large"></i></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--main-->
+	<p style="margin-top: 85px">
 
 		<!--Carrousel-->
-		<div class="container">
+	<div class="container">
 
-        <div class="row">
-            <div class="box">
-                <div class="col-lg-12 text-center">
+		<div class="row">
+			<div class="box">
+				<div class="col-lg-12 text-center">
 
-                	  <h2>
-                        <small>Bienvenido a</small>
-                    </h2>
-                    <h1>
-                        <span class="brand-name">GVent</span>
-                    </h1>
-                    <hr class="tagline-divider">
+					<h2>
+						<small>Bienvenido a</small>
+					</h2>
+					<h1>
+						<span class="brand-name">GVent</span>
+					</h1>
+					<hr class="tagline-divider">
 
-                    <div id="carousel-example-generic" class="carousel slide">
-                        <!-- Indicators -->
-                        <ol class="carousel-indicators hidden-xs">
-                            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-                            <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-                            <li data-target="#carousel-example-generic" data-slide-to="3"></li>
-                        </ol>
+					<div id="carousel-example-generic" class="carousel slide">
+						<!-- Indicators -->
+						<ol class="carousel-indicators hidden-xs">
+							<li data-target="#carousel-example-generic" data-slide-to="0"
+								class="active"></li>
+							<li data-target="#carousel-example-generic" data-slide-to="1"></li>
+							<li data-target="#carousel-example-generic" data-slide-to="2"></li>
+							<li data-target="#carousel-example-generic" data-slide-to="3"></li>
+						</ol>
 
-                        <!-- Wrapper for slides -->
-                        
-                        <div class="carousel-inner">
+						<!-- Wrapper for slides -->
 
-                            <div class="item active">
-                                <img class="img-responsive img-full" src="img/brasil.png" alt="">
-                            </div>
-                            <div class="item">
-                                <img class="img-responsive img-full" src="img/concierto.png" alt="">
-                            </div>
-                            <div class="item">
-                                <img class="img-responsive img-full" src="img/museo.png" alt="">
-                            </div>
-                        </div>
+						<div class="carousel-inner">
 
-                        <!-- Controls -->
-                        <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-                            <span class="icon-prev"></span>
-                        </a>
-                        <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-                            <span class="icon-next"></span>
-                        </a>
-                    </div>
-                  
-                </div>
-            </div>
-        </div>
+							<div class="item active">
+								<img class="img-responsive img-full" src="img/brasil.png" alt="">
+							</div>
+							<div class="item">
+								<img class="img-responsive img-full" src="img/concierto.png"
+									alt="">
+							</div>
+							<div class="item">
+								<img class="img-responsive img-full" src="img/museo.png" alt="">
+							</div>
+						</div>
+
+						<!-- Controls -->
+						<a class="left carousel-control" href="#carousel-example-generic"
+							data-slide="prev"> <span class="icon-prev"></span>
+						</a> <a class="right carousel-control"
+							href="#carousel-example-generic" data-slide="next"> <span
+							class="icon-next"></span>
+						</a>
+					</div>
+
+				</div>
+			</div>
+		</div>
 
 		<!--Fin carrousel-->
 
@@ -110,49 +116,48 @@
 
 		<div class="container" id="main">
 
-		   <div class="row">
-		   <div class="col-md-4 col-sm-12">
-				<div class="panel panel-default">
-				  <div class="panel-heading"><h5>Ultimos Eventos</h5></div>
-					<div class="panel-body">
-					  <div class="list-group" id="result_last_events">
-					  </div>
+			<div class="row">
+				<div class="col-md-6 col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h5>Ultimos Eventos</h5>
+						</div>
+						<div class="panel-body">
+							<div class="list-group" id="result_last_events"></div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="col-md-6 col-sm-12">
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h5>Eventos más populares</h5>
+						</div>
+						<div class="panel-body">
+							<div class="list-group" id="result_popular_events"></div>
+						</div>
 					</div>
 				</div>
 			</div>
 
-
-			<div class="col-md-4 col-sm-12">
-
-				  <div class="panel panel-default">
-				  <div class="panel-heading"><h5>Eventos más populares</h5></div>
-					<div class="panel-body">
-					  <div class="list-group" id="result_popular_events">
-					  </div>
+			<div class="row">
+				<div class="col-md-4 col-md-offset-4">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h5>Descarga la App</h5>
+						</div>
+						<div class="panel-body">
+							<button class="btn btn-success " type="button">
+								<a href="http://147.83.7.159:8080/www/files/gvent.apk">Descargar</a>
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
-
-			
-			<div class="col-md-4 col-sm-12">
-				 <div class="panel panel-default">
-				   <div class="panel-heading"><h5>Eventos mejor puntuados</h5></div>
-					<div class="panel-body">
-					  <ul class="list-group">
-					  <li class="list-group-item">Fiesta en la playa</li>
-					  <li class="list-group-item">Conciertazo</li>
-					  <li class="list-group-item">Festival del humor</li>
-					  </ul>
-					</div>
-				</div>
-
-				
-
-			</div>
-		  </div>
-		   	
- 
-		</div><!--/row-->
+		</div>
+		<!--/row-->
 		</p>
 
 
@@ -160,89 +165,111 @@
 
 
 
+	</div>
+
+
+
+	<br>
+
+	<div class="clearfix"></div>
+
+	<footer>
+		<hr>
+		<div class="col-md-12 text-center">
+			<p>
+				<a href="home.html" target="_ext">Gestiona tus eventos con GVent</a><br>Proyecto
+				de DSA realizado por Alejandro, Miguel y Rubén
+		</div>
+		<hr>
+	</footer>
+
+	</div>
+	</div>
+	<!--/main-->
+
+
+
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script
+		src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script
+		src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+
+	<!--login modal-->
+	<div id="loginModal" class="modal fade" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true"></button>
+					<h2 class="text-center">
+						<img src="./img/profile.png" class="img-circle"><br>Login
+					</h2>
+				</div>
+				<div class="modal-body">
+					<form class="form col-md-12 center-block">
+						<div class="form-group">
+							<input type="text" class="form-control input-lg"
+								placeholder="Usuario" id="username_login">
+						</div>
+						<div class="form-group">
+							<input type="password" class="form-control input-lg"
+								placeholder="Password" id="pass_login">
+						</div>
+						<div class="form-group">
+							<button class="btn btn-primary btn-lg btn-block" id="login_btn">Sign
+								In</button>
+							<span class="pull-right"><a href="register.html">Register</a></span><span><a
+								href="needhelp.html">Need help?</a></span>
+						</div>
+					</form>
+					<div id="result_login"></div>
+				</div>
+				<div class="modal-footer">
+					<div class="col-md-12">
+						<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+					</div>
+				</div>
 			</div>
-
-			
-
-			<br>
-
-			<div class="clearfix"></div>
-
-			<footer>
-			<hr>
-			<div class="col-md-12 text-center"><p><a href="home.html" target="_ext">Gestiona tus eventos con GVent</a><br>Proyecto de DSA realizado por Alejandro, Miguel y Rubén</div>
-			<hr>
-			</footer>
-
-		  </div>
-		</div><!--/main-->
-
-
-
-
-         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-	    <!-- Include all compiled plugins (below), or include individual files as needed -->
-	    <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
-	    <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
-
-
-		<!--login modal-->
-		<div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-		  <div class="modal-dialog">
-		  <div class="modal-content">
-			  <div class="modal-header">
-				  <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-				  <h2 class="text-center"><img src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=100" class="img-circle"><br>Login</h2>
-			  </div>
-			  <div class="modal-body">
-				  <form class="form col-md-12 center-block">
-					<div class="form-group">
-					  <input type="text" class="form-control input-lg" placeholder="Usuario" id="username_login">
-					</div>
-					<div class="form-group">
-					  <input type="password" class="form-control input-lg" placeholder="Password" id="pass_login">
-					</div>
-					<div class="form-group">
-					  <button class="btn btn-primary btn-lg btn-block" id="login_btn">Sign In</button>
-					  <span class="pull-right"><a href="register.html">Register</a></span><span><a href="needhelp.html">Need help?</a></span>
-					</div>
-				  </form>
-				  <div id = "result_login"></div>
-			  </div>
-			  <div class="modal-footer">
-				  <div class="col-md-12">
-				  <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-				  </div>	
-			  </div>
-		  </div>
-		  </div>
 		</div>
+	</div>
 
 
-		<!--about modal-->
-		<div id="aboutModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-		  <div class="modal-dialog">
-		  <div class="modal-content">
-			  <div class="modal-header">
-				  <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-				  <h2 class="text-center">About</h2>
-			  </div>
-			  <div class="modal-body">
-				  <div class="col-md-12 text-center">
-					Esta es la web del proyecto de:<br><ul><li>Alejandro Martin</li><li>Miguel Delgado</li><li>Rubén</li></ul>
-					Esta basada en el template de Google plus de Bootply
-				  </div>
-			  </div>
-			  <div class="modal-footer">
-				  <button class="btn" data-dismiss="modal" aria-hidden="true">OK</button>
-			  </div>
-		  </div>
-		  </div>
+	<!--about modal-->
+	<div id="aboutModal" class="modal fade" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true"></button>
+					<h2 class="text-center">About</h2>
+				</div>
+				<div class="modal-body">
+					<div class="col-md-12 text-center">
+						Esta es la web del proyecto de:<br>
+						<ul>
+							<li>Alejandro Martin</li>
+							<li>Miguel Delgado</li>
+							<li>Rubén</li>
+						</ul>
+						Esta basada en el template de Google plus de Bootply
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">OK</button>
+				</div>
+			</div>
 		</div>
+	</div>
 
-		<!--Script to create and load a map-->
-	        <script>    
+	<!--Script to create and load a map-->
+	<script>    
 	 
 	      function init_map() {
 	        var var_location = new google.maps.LatLng(41.275161,1.986894);
@@ -268,19 +295,19 @@
 	 
 	    </script>
 
-	    <script>
+	<script>
 	    // Activates the Carousel
 	    $('.carousel').carousel({
 	        interval: 5000
 	    })
 	    </script>
 
-        
-        
 
-        <!-- JavaScript jQuery code from Bootply.com editor -->
-        
-        <script type='text/javascript'>
+
+
+	<!-- JavaScript jQuery code from Bootply.com editor -->
+
+	<script type='text/javascript'>
         
         $(document).ready(function() {
         
@@ -300,12 +327,12 @@
         
         </script>
 
-      <script type="text/javascript" src="./js/api.js"></script>
-      <script type="text/javascript" src="./js/linkheaders.js"></script>
-      <script type="text/javascript" src="./js/jquery.base64.js"></script>
-      <script type="text/javascript" src="./js/uritemplate.js"></script>
-      <script type="text/javascript" src="./js/index.js"></script>
-      <script type="text/javascript" src="./js/login.js"></script>
-      <script type="text/javascript" src="./js/jquery.cookie.js"></script>
-    </body>
+	<script type="text/javascript" src="./js/api.js"></script>
+	<script type="text/javascript" src="./js/linkheaders.js"></script>
+	<script type="text/javascript" src="./js/jquery.base64.js"></script>
+	<script type="text/javascript" src="./js/uritemplate.js"></script>
+	<script type="text/javascript" src="./js/index.js"></script>
+	<script type="text/javascript" src="./js/login.js"></script>
+	<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+</body>
 </html>

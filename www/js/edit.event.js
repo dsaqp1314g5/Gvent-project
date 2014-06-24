@@ -1,36 +1,42 @@
 var API_URL= "http://localhost:8080/gvent-api/";
-var USERNAME = "";
-var PASSWORD = "";
-// Autenticacion
-/*
- * $.ajaxSetup({ headers: { 'Authorization': "Basic "+
- * btoa(USERNAME+':'+PASSWORD) } });
- */
 
 var eventURL;
 var eventID;
 var commentsURL;
-
+var lat;
+var lng;
 
 $('#save_settings').click(function(e){
-	var event = new Object();
-	event.title = $('#event_title').val();
-	event.description = $('#event_description').val();
-	event.coordX = $('#event_coordX').val();
-	event.coordY = $('#event_coordY').val();
-	//event.eventDate = $('#event_date');
-	var type = 'application/vnd.gvent.api.event+json';
-	updateEvent(eventURL, type, JSON.stringify(event), function(event){
-		console.log("exitooooooooooooooooooooooooooooo");
-		window.location.replace("/event.html");
-	});
+	e.preventDefault();
+	$('#result_create').text('');
+	if ($('#event_title').val() == "" || $('#event_coordX').val() == "" || $('#event_date').val() == ""	) {
+		$('<div class="alert alert-danger">Rellena todos los campos obligatorios por favor </div>').appendTo($("#result_edit"));
+	}else{
+		var event = new Object();
+		event.title = $('#event_title').val();
+		event.description = $('#event_description').val();
+		event.coordX = $('#event_coordX').val();
+		event.coordY = $('#event_coordY').val();
+		event.eventDate = $('#event_date').val();
+		event.state =  document.getElementById("select_state").value;
+		event.category = document.getElementById("select_category").value;
+		var type = 'application/vnd.gvent.api.event+json';
+		updateEvent(eventURL, type, JSON.stringify(event), function(event){
+			window.location.replace("event.html");
+		});
+	}
+});
+
+
+$('#logout_btn').click(function(e){
+	deleteCookie('username');
 });
 
 $(document).ready(function(){
 	eventURL=$.cookie('link-event');
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
-	console.log($.cookie('username'));
-	console.log(eventURL);
+
+	
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;
 		loadEvent(eventURL);
@@ -39,44 +45,69 @@ $(document).ready(function(){
 });
 
 function loadEvent(url){
-	console.log("cargando evento");
 	getEvent(url, function (event){
-		console.log("obteniendo evento");
-		/*var date = new Date(event.creationDate);
-		var day = date.getDate();
-		var month = date.getMonth() + 1;
-		var year = date.getFullYear();
-		var event_date = year+'/'+month+'/'+day;*/
 		var eventID= event.id;
 		$('#event_title').val(event.title);
 		$('#event_description').text(event.description);
 		$('#event_coordX').val(event.coordX);
 		$('#event_coordY').val(event.coordY);
 		$('#event_date').val(event.eventDate);
-		//init_map(event.coordX, event.coordY);
+		document.getElementById("select_category").value=event.category;
+		document.getElementById("select_state").value=event.state;
+		lat = event.coordX;
+		lng = event.coordY;
+		initialize();
 	});
 }
 
 
-function init_map(coordX, coordY) {
-	var var_location = new google.maps.LatLng(coordX, coordY);
+function initialize() {
 
-	var var_mapoptions = {
-		center : var_location,
-		zoom : 14
+	var myLatlng = new google.maps.LatLng(lat, lng);
+	var mapOptions = {
+		zoom: 8,
+		center: myLatlng 
 	};
+	map = new google.maps.Map(document.getElementById('map-canvas'),
+    mapOptions);
+	
+	 var contentString = '<div id="content">'+
+      '<div id="siteNotice">'+
+      '</div>'+'<div id="bodyContent">'+'<a>Aqui va info del evento</a>'+
+      '</div>'+
+      '</div>';
 
-	var var_marker = new google.maps.Marker({
-		position : var_location,
-		map : var_map,
-		title : "EPSC UPC"
+	
+	var infowindow = new google.maps.InfoWindow({
+		content: contentString
 	});
+	 
+	var marker = new google.maps.Marker({
+      position: myLatlng,
+      map: map,
+      title: 'Hello World!'
+	});
+	  map = new google.maps.Map(document.getElementById('map-canvas'),
+	      mapOptions);
 
-	var var_map = new google.maps.Map(document
-			.getElementById("map-container"), var_mapoptions);
+	  
+	  google.maps.event.addListener(map, "rightclick", function(event) {
+		    var lat = event.latLng.lat();
+		    var lng = event.latLng.lng();
+		    var myLatlng = new google.maps.LatLng(lat,lng);
+		    
+		    
+		    var marker = new google.maps.Marker({
+		        position: myLatlng,
+		        map: map,
+		        title: 'Nuevo evento'
+		    });
 
-	var_marker.setMap(var_map);
+		    $('#event_coordX').val(lat);
+		    $('#event_coordY').val(lng);
+		});
+	}
 
-	google.maps.event.addDomListener(window, 'load', init_map);
-}
+	google.maps.event.addDomListener(window, 'load', initialize);
+
 

@@ -20,8 +20,15 @@
 
 <link href="css/business-casual.css" rel="stylesheet">
 
+<style>
+#map-canvas {
+	height: 300px;
+	margin: 0px;
+	padding: 0px
+}
+</style>
 
-
+</head>
 <!-- Barra de navegación fija on top -->
 <div class="navbar navbar-fixed-top header">
 	<div class="navbar navbar-default" id="subnav">
@@ -49,11 +56,6 @@
 					<li><a href="events.html"><i
 							class="glyphicon glyphicon-inbox" style="color: #11dd11;"></i>
 							Eventos</a></li>
-					<li class="nav-divider"></li>
-					<li><a href="#"><i class="glyphicon glyphicon-cog"
-							style="color: #dd1111;"></i> Configuraciones</a></li>
-					<li><a href="#"><i class="glyphicon glyphicon-plus"></i>
-							Más..</a></li>
 				</ul>
 
 				<!-- Casilla busqueda -->
@@ -70,22 +72,34 @@
 							</div>
 						</div>
 					</form>
+					
 				</div>
+				
+						
 
-
-				<!-- Botones derecha barra navegación -->
+				<!-- Botones derecha barra navegación 
 				<button type="button" class="navbar-toggle" data-toggle="collapse"
 					data-target="#navbar-collapse2">
 					<span class="sr-only">Toggle navigation</span> <span
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
-				</button>
+				</button>-->
 
 			</div>
+								<div class="col-xs-2" style="margin-top: 15px;"> <select
+										class="form-control" id="select_category">
+										<option value="">Todos</option>
+										<option value="deportes">Deportivo</option>
+										<option value="musica">Musical</option>
+										<option value="cultura">Cultural</option>
+										<option value="ocio">Ocio</option>
+										<option value="otros">Otros</option>
+									</select>
+								</div>
 			<div class="collapse navbar-collapse" id="navbar-collapse2">
 				<ul class="nav navbar-nav navbar-right">
 					<li class="active" id="user_loged"></li>
-					<li><a href="index.html" role="button">Logout</a></li>
+					<li><a href="index.html" role="button" id="logout_btn">Logout</a></li>
 					<li><a href="#aboutModal" role="button" data-toggle="modal">About</a></li>
 					<li><a href="#" id="btnToggle"><i
 							class="glyphicon glyphicon-th-large"></i></a></li>
@@ -96,6 +110,7 @@
 </div>
 
 <!--main-->
+<div class="container">
 <p style="margin-top: 85px">
 <div class="col-md-12">
 	<div class="panel panel-default">
@@ -105,23 +120,8 @@
 		</div>
 		<div class="panel-body">
 			<div class="well well-sm">
-				<div class="panel-body">
-					<div class="table-responsive">
-						<table class="table table-hover">
-							<thead>
-								<tr>
-									<th>#</th>
-									<th>Nombre evento</th>
-									<th>Categoria</th>
-									<th>Popularidad</th>
-									<th>Estado</th>
-								</tr>
-							</thead>
-							<tbody id="result_events">
-							</tbody>
-						</table>
-					</div>
-					<center>
+				<div class="panel-body" id="result_events">
+					<!-- <center>
 						<ul class="pagination center-block" style="display: inline-block;">
 							<li><a href="#">«</a></li>
 							<li><a href="#">1</a></li>
@@ -131,15 +131,20 @@
 							<li><a href="#">5</a></li>
 							<li><a href="#">»</a></li>
 						</ul>
-					</center>
+					</center> -->
 				</div>
 			</div>
 			<!-- /tabbable -->
 
+				<div class="col-lg-12">
+					<div class="panel-body">
+						<div id="map-canvas" class="con-md-12"></div>
+					</div>
+				</div>
 		</div>
 	</div>
 </div>
-
+</div>
 
 
 <br>
