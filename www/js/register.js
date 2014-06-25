@@ -11,7 +11,9 @@ $(document).ready(function() {
 $("#register_btn").click(function(e) {
 		e.preventDefault();
 		$("#result_register_process").text('');
-		if ($('#username').val() == "" || $('#name').val() == "" || $('#email').val() == ""	|| $('#password').val() == "" || $('#verify').val() == "") {
+		if($('#username').val().length > 50 || $('#name').val().length > 50 || $('#email').val().length > 50 || $('#password').val().length > 32){
+			$('<div class="alert alert-danger">Algun campo es demasiado largo (Username, name, email : 50 caracteres max. Password: 32 caracteres max</div>').appendTo($("#result_register_process"));
+		}else if ($('#username').val() == "" || $('#name').val() == "" || $('#email').val() == ""	|| $('#password').val() == "" || $('#verify').val() == "") {
 				$('<div class="alert alert-danger">Rellena todos los campos por favor </div>').appendTo($("#result_register_process"));
 		}else if ($('#password').val() != $('#verify').val()) {
 				$('<div class="alert alert-danger">Los passwords no coinciden</div>').appendTo($("#result_register_process"));

@@ -2,6 +2,9 @@ var map;
 var eventsURL;
 var markers =[];
 $(document).ready(function(){
+	if($.cookie('username')==undefined){
+		window.location.replace("index.html");
+	}
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
 	initialize();
 	loadRootAPI(function(rootAPI){
@@ -11,9 +14,15 @@ $(document).ready(function(){
 
 $('#create_btn').click(function(e){
 	e.preventDefault();
+	var datePattern = /^\d{2,4}\-\d{1,2}\-\d{1,2}$/;
+	
 	$('#result_create').text('');
-	if ($('#event_title').val() == "" || $('#event_coordX').val() == "" || $('#event_date').val() == ""	) {
+	if($('#event_title').val().length > 50 ||$('#event_description').val().length > 500){
+		$('<div class="alert alert-danger">El titulo o descripcion son demasiado largos (50 y 500 caracteres)</div>').appendTo($("#result_create"));
+	}else if ($('#event_title').val() == "" || $('#event_coordX').val() == "" || $('#event_date').val() == ""	) {
 		$('<div class="alert alert-danger">Rellena todos los campos obligatorios por favor </div>').appendTo($("#result_create"));
+	}else if(!$('#event_date').val().match(datePattern)){
+		$('<div class="alert alert-danger">El formato de la fecha no es el adecuado (YYYY-MM-DD) </div>').appendTo($("#result_create"));
 	}else{
 		createEvent2();
 	}

@@ -15,6 +15,9 @@ $('#logout_btn').click(function(e){
 
 $(document).ready(function(){
 
+	if($.cookie('username')==undefined){
+		window.location.replace("index.html");
+	}
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
 	$('<h1>'+ $.cookie('username') +'</h1>').appendTo($('#username'));
 	loadRootAPI(function(rootAPI){
@@ -37,9 +40,11 @@ function loadEventsBy(url, title, category){
 	}
 	var events = getEvents(urlSearch, function(eventCollection){
 		var neighborhoods = new Array();
+		var title = new Array();
 		$.each(eventCollection.events, function(index,item){
 			var event = new Event(item);
 			neighborhoods.push(new google.maps.LatLng(event.coordX, event.coordY));
+			title.push(event.title);
 			var link = $('<div class="well well-sm"><div class="media" ><div class="media-body"><h4 class="media-heading">'+event.title+'</h4><h6>Followers: '+event.popularity+'</h6><h6>Estado: '+event.state+'</h6><p><a class="btn btn-xs btn-default"><span class="glyphicon glyphicon-map-marker"></span>Ver evento</a></p></div></div></div>');
 			link.click(function(e){
 				 $.cookie('link-event',  event.getLink("self").href);
@@ -50,13 +55,14 @@ function loadEventsBy(url, title, category){
 			div.append(link);
 			$('#result_events').append(div);
 		});
-		initialize(neighborhoods);
+		initialize(neighborhoods, title);
 	});
 	
 
 }
 
-function initialize(neighborhoods) {
+function initialize(neighborhoods, title) {
+  iterator =0;
   var mapOptions = {
     zoom: 9
   };
@@ -86,7 +92,7 @@ function initialize(neighborhoods) {
     handleNoGeolocation(false);
   }
   
-  drop(neighborhoods);
+  drop(neighborhoods, title);
 }
 
 function handleNoGeolocation(errorFlag) {
@@ -107,15 +113,15 @@ function handleNoGeolocation(errorFlag) {
   map.setCenter(options.position);
 }
 
-function drop(neighborhoods) {
+function drop(neighborhoods, title) {
   for (var i = 0; i < neighborhoods.length; i++) {
     setTimeout(function() {
-      addMarker(neighborhoods);
+      addMarker(neighborhoods, title);
     }, i * 200);
   }
 }
 
-function addMarker(neighborhoods) {
+function addMarker(neighborhoods, title) {
 	
   markers.push(new google.maps.Marker({
     position: neighborhoods[iterator],
@@ -123,10 +129,24 @@ function addMarker(neighborhoods) {
     draggable: false,
     animation: google.maps.Animation.DROP
   }));
+  
+  var contentString = '<div id="content">'+title[iterator]+'</div>';
+  
+  var infowindow2 = new google.maps.InfoWindow({
+      content: contentString,
+      position: neighborhoods[iterator]
+  });
+  
+
+  google.maps.event.addListener(markers[iterator], 'click', function() {
+    infowindow2.open(map,markers[iterator]);
+  });
+
   iterator++;
 }
 
 function setAllMap(map) {
+	
 	  for (var i = 0; i < markers.length; i++) {
 	    markers[i].setMap(map);
 	  }

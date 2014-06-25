@@ -15,7 +15,7 @@ create table users (
 
 
 create table user_roles (
-	username			varchar(105) not null,
+	username			varchar(50) not null,
 	rolename 			varchar(20) not null,
 	foreign key(username) references users(username) on delete cascade,
 	primary key (username, rolename)
@@ -29,7 +29,7 @@ create table events (
 	coord_y		varchar(25) not null,
 	category	varchar(20) not null,
 	description	varchar(500),
-	owner		varchar(20) not null,
+	owner		varchar(50) not null,
 	state		varchar(10) not null,
 	public		boolean not null,
 	creation_date	timestamp not null,
@@ -40,7 +40,7 @@ create table events (
 
 create table comments (
 	id				int not null auto_increment primary key,
-	username 		varchar(20) not null,
+	username 		varchar(50) not null,
 	event_id		int not null,
 	comment			varchar(200) not null,
 	last_modified	timestamp not null,
@@ -50,15 +50,15 @@ create table comments (
 
 create table event_users (
 	event_id	int not null,
-	username	varchar(20) not null,
+	username	varchar(50) not null,
 	foreign key(username) references users(username) on delete cascade,
 	foreign key(event_id) references events(id) on delete cascade,
 	primary key (event_id, username)
 );
 
 create table friends (
-    Username_A  varchar(20) not null,
-    Username_B  varchar(20) not null,
+    Username_A  varchar(50) not null,
+    Username_B  varchar(50) not null,
     foreign key(Username_A) references users(Username) on delete cascade,
     foreign key(Username_B) references users(Username) on delete cascade,
     primary key(Username_A,Username_B)

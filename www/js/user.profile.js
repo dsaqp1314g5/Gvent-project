@@ -23,6 +23,10 @@ $('#logout_btn').click(function(e){
 });
 
 $(document).ready(function(){
+
+	if($.cookie('username')==undefined){
+		window.location.replace("index.html");
+	}
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;
 	});

@@ -1,121 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
-        <meta charset="utf-8">
-        <title>Geolocalization Events (GVent)</title>
-        <meta name="generator" content="Bootply" />
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>Geolocalization Events (GVent)</title>
+<meta name="generator" content="Bootply" />
 
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-        <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet">
-        
-        <!--[if lt IE 9]>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<link
+	href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!--[if lt IE 9]>
           <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-                		
-		<link href="theme.css" rel="stylesheet">
-		<link href="css/business-casual.css" rel="stylesheet">
+
+<link href="theme.css" rel="stylesheet">
+<link href="css/business-casual.css" rel="stylesheet">
 
 
-		<!-- style para map container -->
-		<style>
-      		#map-container { height: 300px }
-    	</style>
-    </head>
-    
-    <body >
-    
+<!-- style para map container -->
+<style>
+#map-container {
+	height: 300px
+}
+</style>
+</head>
 
-        <!-- Barra de navegación fija on top -->
-	  	<div class="navbar navbar-fixed-top header">
+<body>
+
+
+	<!-- Barra de navegación fija on top -->
+	<div class="navbar navbar-fixed-top header">
 		<div class="navbar navbar-default" id="subnav">
 			<div class="col-md-12">
 				<div class="navbar-header">
 
 
-				<!-- Menu desplegable izquierda barra navegación -->
-				  <a href="#" style="margin-left:15px;" class="navbar-btn btn btn-default btn-plus dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-home" style="color:#dd1111;"></i> GVent Menu <small><i class="glyphicon glyphicon-chevron-down"></i></small></a>
-				  <ul class="nav dropdown-menu">
+					<!-- Menu desplegable izquierda barra navegación -->
+					<a href="#" style="margin-left: 15px;"
+						class="navbar-btn btn btn-default btn-plus dropdown-toggle"
+						data-toggle="dropdown"><i class="glyphicon glyphicon-home"
+						style="color: #dd1111;"></i> GVent Menu <small><i
+							class="glyphicon glyphicon-chevron-down"></i></small></a>
+					<ul class="nav dropdown-menu">
 
-					  <li><a href="home.html"><i class="glyphicon glyphicon-home" style="color:#1111dd;"></i> Home</a></li>
-					  <li><a href="user_profile.html"><i class="glyphicon glyphicon-user" style="color:#1111dd;"></i> Profile</a></li>
-					  <li><a href="create_event.html"><i class="glyphicon glyphicon-dashboard" style="color:#0000aa;"></i> Crear evento</a></li>
-					  <li><a href="events.html"><i class="glyphicon glyphicon-inbox" style="color:#11dd11;"></i> Eventos</a></li>
-				  </ul>
-                    
-					
+						<li><a href="home.html"><i
+								class="glyphicon glyphicon-home" style="color: #1111dd;"></i>
+								Home</a></li>
+						<li><a href="user_profile.html"><i
+								class="glyphicon glyphicon-user" style="color: #1111dd;"></i>
+								Profile</a></li>
+						<li><a href="create_event.html"><i
+								class="glyphicon glyphicon-dashboard" style="color: #0000aa;"></i>
+								Crear evento</a></li>
+						<li><a href="events.html"><i
+								class="glyphicon glyphicon-inbox" style="color: #11dd11;"></i>
+								Eventos</a></li>
+						<li><a href="users.html"><i
+								class="glyphicon glyphicon-user" style="color: #1111dd;"></i>
+								Usuarios</a></li>
+					</ul>
 
-				  <!-- Botones derecha barra navegación -->
-				  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse2">
-				  <span class="sr-only">Toggle navigation</span>
-				  <span class="icon-bar"></span>
-				  <span class="icon-bar"></span>
-				  <span class="icon-bar"></span>
-				  </button>
+
+
+					<!-- Botones derecha barra navegación -->
+					<button type="button" class="navbar-toggle" data-toggle="collapse"
+						data-target="#navbar-collapse2">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
 
 				</div>
 				<div class="collapse navbar-collapse" id="navbar-collapse2">
-				  <ul class="nav navbar-nav navbar-right">
-					 <li class="active" id="user_loged"></li>
-					 <li><a href="index.html" role="button" id="logout_btn">Logout</a></li>
-					 <li><a href="#aboutModal" role="button" data-toggle="modal">About</a></li>
-				   	 <li><a href="#" id="btnToggle"><i class="glyphicon glyphicon-th-large"></i></a></li>
-				   </ul>
-				</div>	
-			 </div>	
+					<ul class="nav navbar-nav navbar-right">
+						<li class="active" id="user_loged"></li>
+						<li><a href="index.html" role="button" id="logout_btn">Logout</a></li>
+						<li><a href="#aboutModal" role="button" data-toggle="modal">About</a></li>
+						<li><a href="#" id="btnToggle"><i
+								class="glyphicon glyphicon-th-large"></i></a></li>
+					</ul>
+				</div>
+			</div>
 		</div>
-		</div>
+	</div>
 
-		<!--main-->
-		<p style="margin-top:85px">
+	<!--main-->
+	<p style="margin-top: 85px">
 
 		<!--Carrousel-->
-		<div class="container">
+	<div class="container">
 
-        <div class="row">
-            <div class="box">
-                <div class="col-lg-12 text-center">
-                    <div id="carousel-example-generic" class="carousel slide">
-                        <!-- Indicators -->
-                        <ol class="carousel-indicators hidden-xs">
-                            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-                            <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-                            <li data-target="#carousel-example-generic" data-slide-to="3"></li>
-                        </ol>
+		<div class="row">
+			<div class="box">
+				<div class="col-lg-12 text-center">
+					<div id="carousel-example-generic" class="carousel slide">
+						<!-- Indicators -->
+						<ol class="carousel-indicators hidden-xs">
+							<li data-target="#carousel-example-generic" data-slide-to="0"
+								class="active"></li>
+							<li data-target="#carousel-example-generic" data-slide-to="1"></li>
+							<li data-target="#carousel-example-generic" data-slide-to="2"></li>
+							<li data-target="#carousel-example-generic" data-slide-to="3"></li>
+						</ol>
 
-                        <!-- Wrapper for slides -->
-                        <div class="carousel-inner">
-                            <div class="item active">
-                                <img class="img-responsive img-full" src="img/brasil.png" alt="">
-                            </div>
-                            <div class="item">
-                                <img class="img-responsive img-full" src="img/concierto.png" alt="">
-                            </div>
-                            <div class="item">
-                                <img class="img-responsive img-full" src="img/museo.png" alt="">
-                            </div>
-                        </div>
+						<!-- Wrapper for slides -->
+						<div class="carousel-inner">
+							<div class="item active">
+								<img class="img-responsive img-full" src="img/brasil.png" alt="">
+							</div>
+							<div class="item">
+								<img class="img-responsive img-full" src="img/concierto.png"
+									alt="">
+							</div>
+							<div class="item">
+								<img class="img-responsive img-full" src="img/museo.png" alt="">
+							</div>
+						</div>
 
-                        <!-- Controls -->
-                        <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-                            <span class="icon-prev"></span>
-                        </a>
-                        <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-                            <span class="icon-next"></span>
-                        </a>
-                    </div>
-                    <h2>
-                        <small>Bienvenido a</small>
-                    </h2>
-                    <h1>
-                        <span class="brand-name">GVent</span>
-                    </h1>
-                    <hr class="tagline-divider">
-                </div>
-            </div>
-        </div>
+						<!-- Controls -->
+						<a class="left carousel-control" href="#carousel-example-generic"
+							data-slide="prev"> <span class="icon-prev"></span>
+						</a> <a class="right carousel-control"
+							href="#carousel-example-generic" data-slide="next"> <span
+							class="icon-next"></span>
+						</a>
+					</div>
+					<h2>
+						<small>Bienvenido a</small>
+					</h2>
+					<h1>
+						<span class="brand-name">GVent</span>
+					</h1>
+					<hr class="tagline-divider">
+				</div>
+			</div>
+		</div>
 
 		<!--Fin carrousel-->
 
@@ -181,14 +204,13 @@
 						<div class="panel-heading">
 							<h5>Amigos</h5>
 						</div>
-						<div class="panel-body" id="result_friends">
-						</div>
+						<div class="panel-body" id="result_friends"></div>
 					</div>
 				</div>
 			</div>
 
 			<!-- Container con geolocalización y mapa -->
-			
+
 		</div>
 
 
@@ -199,8 +221,8 @@
 
 
 
-		</div>
-		<!--/articles-->
+	</div>
+	<!--/articles-->
 
 	</div>
 
@@ -213,8 +235,7 @@
 	<footer>
 		<hr>
 		<div class="col-md-12 text-center">
-			<p>
-				<a href="home.html" target="_ext">Gestiona tus eventos con GVent</a><br>Proyecto
+			<p><br>Proyecto
 				de DSA realizado por Alejandro, Miguel y Rubén
 		</div>
 		<hr>
@@ -304,7 +325,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<script>
 		// Activates the Carousel
 		$('.carousel').carousel({

@@ -2,6 +2,10 @@ var API_URL = "http://147.83.7.159:8080/gvent-api/";
 
 var userURL;
 $(document).ready(function() {
+
+	if($.cookie('username')==undefined){
+		window.location.replace("index.html");
+	}
 	userURL = $.cookie('link-user');
 	getUser(userURL, function(user){
 		var userlog= new User(user);
@@ -15,8 +19,9 @@ $(document).ready(function() {
 $("#save_btn").click(function(e) {
 		e.preventDefault();
 		$("#result_edit_process").text('');
-		if ($('#password').val() != $('#verify').val()) {
-
+		if($('#password').val()=="" || $('#verify').val()=="" || $('#name').val()=="" || $('#email').val()=="" ){
+			$('<div class="alert alert-danger">Rellena todos los campos por favor </div>').appendTo($("#result_edit_process"));
+		}else if ($('#password').val() != $('#verify').val()) {
 				$('<div class="alert alert-danger">Los passwords no coinciden</div>').appendTo($("#result_edit_process"));
 		}else {
 				var user = new Object();

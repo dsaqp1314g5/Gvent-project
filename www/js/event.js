@@ -9,7 +9,12 @@ var eventTitle;
 var link_owner;
 $("#post_comment").click(function(e){
 	e.preventDefault();
-	postComment();
+	$("#result_comments2").text('');
+	if($('#comment_text').val().length > 200){
+		$('<div class="alert alert-danger">El comentario es demasiado largo (200 caracteres max)</div>').appendTo($("#result_comments2"));
+	}else{
+		postComment();
+	}
 });
 
 $("#settings_btn").click(function(e){
@@ -41,6 +46,10 @@ $('#delete_event_btn').click(function(e){
 
 
 $(document).ready(function(){
+
+	if($.cookie('username')==undefined){
+		window.location.replace("index.html");
+	}
 	eventURL=$.cookie('link-event');
 	commentsURL=$.cookie('link-comment');
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
@@ -98,26 +107,13 @@ function initialize() {
 	map = new google.maps.Map(document.getElementById('map-canvas'),
     mapOptions);
 	
-	 var contentString = '<div id="content">'+
-      '<div id="siteNotice">'+
-      '</div>'+'<div id="bodyContent">'+'<a>Aqui va info del evento</a>'+
-      '</div>'+
-      '</div>';
-
 	
-	var infowindow = new google.maps.InfoWindow({
-		content: contentString
-	});
-	 
 	var marker = new google.maps.Marker({
       position: myLatlng,
       map: map,
       title: 'Hello World!'
 	});
 	
-	google.maps.event.addListener(marker, 'click', function() {
-		infowindow.open(map,marker);
-	});
 
 }
 
