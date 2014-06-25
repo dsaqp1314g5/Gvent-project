@@ -34,7 +34,6 @@ INSERT INTO event_users(username, event_id) VALUES('nbRuben', 2);
 INSERT INTO event_users(username, event_id) VALUES('nbRuben', 1);
 INSERT INTO event_users(username, event_id) VALUES('Mikiodelg', 3);
 INSERT INTO event_users(username, event_id) VALUES('Alej563', 3);
-INSERT INTO event_users(username, event_id) VALUES('nbRuben', 3);
 INSERT INTO event_users(username, event_id) VALUES('Alej563', 4);
 INSERT INTO event_users(username, event_id) VALUES('Mikiodelg', 5);
 INSERT INTO friends(username_a, username_b) VALUES('nbRuben', 'Alej563');

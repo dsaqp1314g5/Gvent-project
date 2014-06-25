@@ -9,6 +9,10 @@ var followedEventsURL;
 var myEventsURL;
 var myFriendsURL;
 $(document).ready(function(){
+	
+	if($.cookie('username')==undefined){
+		window.location.replace("index.html");
+	}
 	$('<a id="username_loged">'+ $.cookie('username') +'</a>').appendTo($('#user_loged'));
 	loadRootAPI(function(rootAPI){
 		eventsURL = rootAPI.getLink('events').href;

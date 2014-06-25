@@ -290,16 +290,18 @@ public class EventResource {
 		try {
 
 			stmt = conn.prepareStatement(searchGetEventByIdQuery());
+			
 			if(category != null){
-				stmt.setString(2, category);
+				stmt.setString(2, "%" + category +"%");
 			}else{
-				stmt.setString(2, "%''%");
+				stmt.setString(2, "%%");
 			}
 			if(title != null){
 				stmt.setString(1, "%" + title + "%");
 			}else{
-				stmt.setString(1, "%''%");
+				stmt.setString(1, "%%");
 			}
+			
 			length = (length <= 0) ? 10 : length;
 
 			stmt.setInt(3, length);
@@ -343,7 +345,8 @@ public class EventResource {
 	
 	private String searchGetEventByIdQuery() {
 		
-		return "SELECT * FROM events WHERE title like ? or category = ? LIMIT ?";
+			return "SELECT * FROM events WHERE title like ? and category like ? LIMIT ?";
+	
 	}
 
 	
